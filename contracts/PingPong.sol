@@ -1,41 +1,74 @@
-// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 
 import "evm-gateway-contract/contracts/IGateway.sol";
-import "evm-gateway-contract/contracts/IApplication.sol";
 import "evm-gateway-contract/contracts/ICrossTalkApplication.sol";
 import "evm-gateway-contract/contracts/Utils.sol";
-import "hardhat/console.sol";
 
-contract HelloWorld is ICrossTalkApplication {
+contract PingPong is ICrossTalkApplication {
   IGateway public gatewayContract;
   string public greeting;
   uint64 public lastEventIdentifier;
+  uint64 public destGasLimit;
+  uint64 public ackGasLimit;
 
   error CustomError(string message);
 
-  constructor(address payable gatewayAddress) {
+  constructor(
+    address payable gatewayAddress,
+    uint64 _destGasLimit,
+    uint64 _ackGasLimit
+  ) {
     gatewayContract = IGateway(gatewayAddress);
+    destGasLimit = _destGasLimit;
+    ackGasLimit = _ackGasLimit;
   }
 
   function pingDestination(
     uint64 chainType,
     string memory chainId,
+    uint64 destGasPrice,
+    uint64 ackGasPrice,
     address destinationContractAddress,
-    string memory str
-  ) public payable {
+    string memory str,
+    uint64 expiryDurationInSeconds
+  ) public payable returns (uint64) {
     bytes memory payload = abi.encode(str);
-    uint64 timestamp = 1681014199;
+    uint64 expiryTimestamp = uint64(block.timestamp) + expiryDurationInSeconds;
     bytes[] memory addresses = new bytes[](1);
     addresses[0] = toBytes(destinationContractAddress);
     bytes[] memory payloads = new bytes[](1);
     payloads[0] = payload;
-    lastEventIdentifier = gatewayContract.multipleRequestsToDestWithAck(
-      timestamp,
+    _pingDestination(
+      expiryTimestamp,
+      destGasPrice,
+      ackGasPrice,
+      chainType,
+      chainId,
+      payloads,
+      addresses
+    );
+  }
+
+  function _pingDestination(
+    uint64 expiryTimestamp,
+    uint64 destGasPrice,
+    uint64 ackGasPrice,
+    uint64 chainType,
+    string memory chainId,
+    bytes[] memory payloads,
+    bytes[] memory addresses
+  ) internal {
+    lastEventIdentifier = gatewayContract.requestToDest(
+      expiryTimestamp,
       false,
       Utils.AckType.ACK_ON_SUCCESS,
-      Utils.AckGasParams(0, 0),
-      Utils.DestinationChainParams(0, 0, chainType, chainId),
+      Utils.AckGasParams(ackGasLimit, ackGasPrice),
+      Utils.DestinationChainParams(
+        destGasLimit,
+        destGasPrice,
+        chainType,
+        chainId
+      ),
       Utils.ContractCalls(payloads, addresses)
     );
   }
@@ -47,7 +80,6 @@ contract HelloWorld is ICrossTalkApplication {
     uint64 srcChainType
   ) external override returns (bytes memory) {
     require(msg.sender == address(gatewayContract));
-    require(address(this) == toAddress(srcContractAddress));
 
     string memory sampleStr = abi.decode(payload, (string));
 
@@ -65,25 +97,7 @@ contract HelloWorld is ICrossTalkApplication {
     bool[] memory execFlags,
     bytes[] memory execData
   ) external view override {
-    console.log(eventIdentifier);
-    for (uint i = 0; i < execFlags.length; i++) {
-      console.log(execFlags[i]);
-      console.logBytes(execData[i]);
-    }
-
     require(lastEventIdentifier == eventIdentifier);
-  }
-
-  receive() external payable {}
-
-  function toAddress(
-    bytes memory _bytes
-  ) internal pure returns (address contractAddress) {
-    bytes20 srcTokenAddress;
-    assembly {
-      srcTokenAddress := mload(add(_bytes, 0x20))
-    }
-    contractAddress = address(srcTokenAddress);
   }
 
   function toBytes(address a) public pure returns (bytes memory b) {

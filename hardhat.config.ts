@@ -13,6 +13,9 @@ import { config as dotenvConfig } from "dotenv";
 import { NetworkUserConfig } from "hardhat/types";
 import "@nomiclabs/hardhat-etherscan";
 // import "@nomiclabs/hardhat-ganache";
+import "./tasks/storeDeployments";
+import "./tasks/deploy/XERC1155";
+import "./tasks/deploy/PingPong";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
