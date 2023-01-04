@@ -1,3 +1,4 @@
+//SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0 <0.9.0;
 
 import "evm-gateway-contract/contracts/IGateway.sol";
@@ -12,6 +13,8 @@ contract PingPong is ICrossTalkApplication {
   uint64 public ackGasLimit;
 
   error CustomError(string message);
+  event ExecutionStatus(uint64 eventIdentifier, bool isSuccess);
+  event ReceivedSrcChainIdAndType(uint64 chainType, string chainID);
 
   constructor(
     address payable gatewayAddress,
@@ -31,13 +34,17 @@ contract PingPong is ICrossTalkApplication {
     address destinationContractAddress,
     string memory str,
     uint64 expiryDurationInSeconds
-  ) public payable returns (uint64) {
+  ) public payable {
     bytes memory payload = abi.encode(str);
+
     uint64 expiryTimestamp = uint64(block.timestamp) + expiryDurationInSeconds;
+
     bytes[] memory addresses = new bytes[](1);
     addresses[0] = toBytes(destinationContractAddress);
+
     bytes[] memory payloads = new bytes[](1);
     payloads[0] = payload;
+
     _pingDestination(
       expiryTimestamp,
       destGasPrice,
@@ -74,7 +81,7 @@ contract PingPong is ICrossTalkApplication {
   }
 
   function handleRequestFromSource(
-    bytes memory srcContractAddress,
+    bytes memory, //srcContractAddress
     bytes memory payload,
     string memory srcChainId,
     uint64 srcChainType
@@ -88,6 +95,7 @@ contract PingPong is ICrossTalkApplication {
     ) {
       revert CustomError("String should not be empty");
     }
+
     greeting = sampleStr;
     return abi.encode(srcChainId, srcChainType);
   }
@@ -96,8 +104,17 @@ contract PingPong is ICrossTalkApplication {
     uint64 eventIdentifier,
     bool[] memory execFlags,
     bytes[] memory execData
-  ) external view override {
-    require(lastEventIdentifier == eventIdentifier);
+  ) external override {
+    require(lastEventIdentifier == eventIdentifier, "wrong event identifier");
+    bytes memory _execData = abi.decode(execData[0], (bytes));
+
+    (string memory chainID, uint64 chainType) = abi.decode(
+      _execData,
+      (string, uint64)
+    );
+
+    emit ExecutionStatus(eventIdentifier, execFlags[0]);
+    emit ReceivedSrcChainIdAndType(chainType, chainID);
   }
 
   function toBytes(address a) public pure returns (bytes memory b) {

@@ -16,7 +16,7 @@ task("TASK_DEPLOY_XERC1155").setAction(async function (
 
   console.log("Contract Deployment Started ");
   const Erc1155 = await hre.ethers.getContractFactory("XERC1155");
-  const erc1155 = await Erc1155.deploy("", gatewayContract);
+  const erc1155 = await Erc1155.deploy("uri", gatewayContract, 1000000);
   await erc1155.deployed();
 
   console.log(deployContract + " Contract deployed to: ", erc1155.address);

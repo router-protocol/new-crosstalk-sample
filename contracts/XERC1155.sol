@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0 <0.9.0;
 
 import "evm-gateway-contract/contracts/IGateway.sol";
@@ -20,13 +21,16 @@ contract XERC1155 is ERC1155, ICrossTalkApplication {
   }
 
   constructor(
-    string memory uri,
+    string memory _uri,
     address payable gatewayAddress,
     uint64 _destGasLimit
-  ) ERC1155(uri) {
+  ) ERC1155(_uri) {
     gatewayContract = IGateway(gatewayAddress);
     destGasLimit = _destGasLimit;
     admin = msg.sender;
+
+    // Mint 10 NFTs of ID 1 to msg sender
+    _mint(msg.sender, 1, 10, "");
   }
 
   function setContractOnChain(
@@ -93,16 +97,18 @@ contract XERC1155 is ERC1155, ICrossTalkApplication {
     string memory srcChainId,
     uint64 srcChainType
   ) external override returns (bytes memory) {
-    require(msg.sender == address(gatewayContract));
+    require(msg.sender == address(gatewayContract), "only gateway");
     require(
       keccak256(srcContractAddress) ==
-        keccak256(ourContractOnChains[srcChainType][srcChainId])
+        keccak256(ourContractOnChains[srcChainType][srcChainId]),
+      "only our contract"
     );
 
     TransferParams memory transferParams = abi.decode(
       payload,
       (TransferParams)
     );
+
     _mintBatch(
       // converting the address of recipient from bytes to address
       toAddress(transferParams.recipient),
@@ -111,7 +117,7 @@ contract XERC1155 is ERC1155, ICrossTalkApplication {
       transferParams.nftData
     );
 
-    return abi.encode(srcChainId, srcChainType);
+    return "";
   }
 
   function handleCrossTalkAck(

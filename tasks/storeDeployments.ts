@@ -6,7 +6,7 @@ task("TASK_STORE_DEPLOYMENTS", "stores deployment addresses")
   .addParam<string>("contractAddress", "Contract Address", "", types.string)
   .addParam<string>("chainID", "chain id", "", types.string)
   .setAction(async (taskArgs, { ethers }): Promise<null> => {
-    const deployedContracts = require("deployments/deployments.json");
+    const deployedContracts = require("../deployment/deployments.json");
 
     if (typeof deployedContracts[taskArgs.chainID] === "undefined") {
       deployedContracts[taskArgs.chainID] = {};
@@ -16,7 +16,7 @@ task("TASK_STORE_DEPLOYMENTS", "stores deployment addresses")
       taskArgs.contractAddress;
 
     fs.writeFileSync(
-      "deployments/deployments.json",
+      "deployment/deployments.json",
       JSON.stringify(deployedContracts)
     );
 

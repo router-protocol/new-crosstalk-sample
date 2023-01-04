@@ -1,8 +1,12 @@
 {
-  "7545": {
-    "gatewayContract": ""
+  "43113": {
+    "gatewayContract": "0x238d31C15B062Dfb62149C95852EEB2B355947B0",
+    "PingPong": "0xa4c21D61B79E4F7C00B2c6910982EE137E3572af",
+    "XERC1155": "0xAdC1247871b11eaaEb498e8D7F6A769B42460022"
   },
-  "6545": {
-    "gatewayContract": ""
+  "80001": {
+    "gatewayContract": "0xaf3ca8415383F9111ef6A5642d3A38294e8461A5",
+    "PingPong": "0x40d97308497e692280fdCEa2895265d4703ee195",
+    "XERC1155": "0x7F4459a68AE7C0546812Ca178EE2B291d7366F99"
   }
 }

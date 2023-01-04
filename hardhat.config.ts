@@ -1,10 +1,6 @@
 import { HardhatUserConfig } from "hardhat/config";
-// import "@nomicfoundation/hardhat-toolbox";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
-// import "hardhat-deploy";
-// import "hardhat-deploy-ethers";
-// import "hardhat-gas-reporter";
 import "@openzeppelin/hardhat-upgrades";
 import "solidity-coverage";
 import { resolve } from "path";
@@ -12,7 +8,6 @@ import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
 import { NetworkUserConfig } from "hardhat/types";
 import "@nomiclabs/hardhat-etherscan";
-// import "@nomiclabs/hardhat-ganache";
 import "./tasks/storeDeployments";
 import "./tasks/deploy/XERC1155";
 import "./tasks/deploy/PingPong";
@@ -66,7 +61,8 @@ function getChainConfig(network: keyof typeof chainIds): NetworkUserConfig {
     url =
       "https://polygon-mainnet.g.alchemy.com/v2/hCz4x1BLpLDP3NoomXivfaqND37qCSgS";
   } else if (network == "mumbai") {
-    url = "https://polygon-rpc.com";
+    url =
+      "https://polygon-mumbai.g.alchemy.com/v2/7PDGHtfRIuSxeCJwzBlDLqk_6I20AIvz";
   } else if (network == "bsc") {
     url = "https://bsc-dataseed.binance.org/";
   } else if (network == "avalanche") {
@@ -252,6 +248,7 @@ const config = {
     moonbeam: getChainConfig("moonbeam"),
     fuji: getChainConfig("fuji"),
     goerli: getChainConfig("goerli"),
+    mumbai: getChainConfig("mumbai"),
   },
   paths: {
     artifacts: "./artifacts",
@@ -263,7 +260,7 @@ const config = {
     // imports: "./imports",
   },
   solidity: {
-    version: "0.8.4",
+    version: "0.8.7",
     settings: {
       evmVersion: "berlin",
       metadata: {

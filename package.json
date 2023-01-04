@@ -1,5 +1,9 @@
 {
   "name": "hardhat-project",
+  "scripts": {
+    "compile": "hardhat compile",
+    "clean": "hardhat clean"
+  },
   "devDependencies": {
     "@codechecks/client": "^0.1.11",
     "@commitlint/cli": "^13.1.0",
@@ -51,6 +55,6 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.0",
-    "evm-gateway-contract": "^1.0.3"
+    "evm-gateway-contract": "^1.0.4"
   }
 }
