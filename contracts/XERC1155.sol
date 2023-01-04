@@ -1,14 +1,14 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: Unlicensed
 pragma solidity >=0.8.0 <0.9.0;
 
-import "evm-gateway-contract/contracts/IGateway.sol";
 import "evm-gateway-contract/contracts/ICrossTalkApplication.sol";
 import "evm-gateway-contract/contracts/Utils.sol";
+import "./CrossTalkUtils.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
 contract XERC1155 is ERC1155, ICrossTalkApplication {
   address public admin;
-  IGateway public gatewayContract;
+  address public gatewayContract;
   uint64 public destGasLimit;
   // chain type + chain id => address of our contract in bytes
   mapping(uint64 => mapping(string => bytes)) public ourContractOnChains;
@@ -25,11 +25,10 @@ contract XERC1155 is ERC1155, ICrossTalkApplication {
     address payable gatewayAddress,
     uint64 _destGasLimit
   ) ERC1155(_uri) {
-    gatewayContract = IGateway(gatewayAddress);
+    gatewayContract = gatewayAddress;
     destGasLimit = _destGasLimit;
     admin = msg.sender;
 
-    // Mint 10 NFTs of ID 1 to msg sender
     _mint(msg.sender, 1, 10, "");
   }
 
@@ -54,40 +53,15 @@ contract XERC1155 is ERC1155, ICrossTalkApplication {
 
     bytes memory payload = abi.encode(transferParams);
     uint64 expiryTimestamp = uint64(block.timestamp) + expiryDurationInSeconds;
+    Utils.DestinationChainParams memory destChainParams = Utils
+      .DestinationChainParams(destGasLimit, destGasPrice, chainType, chainId);
 
-    bytes[] memory addresses = new bytes[](1);
-    // fetching the address of NFT contract address on the destination chain
-    addresses[0] = ourContractOnChains[chainType][chainId];
-
-    bytes[] memory payloads = new bytes[](1);
-    payloads[0] = payload;
-
-    sendCrossChain(
-      addresses,
-      payloads,
-      Utils.DestinationChainParams(
-        destGasLimit,
-        destGasPrice,
-        chainType,
-        chainId
-      ),
-      expiryTimestamp
-    );
-  }
-
-  function sendCrossChain(
-    bytes[] memory addresses,
-    bytes[] memory payloads,
-    Utils.DestinationChainParams memory destChainParams,
-    uint64 expiryTimestamp
-  ) internal {
-    gatewayContract.requestToDest(
+    CrossTalkUtils.singleRequestWithoutAcknowledgement(
+      gatewayContract,
       expiryTimestamp,
-      false,
-      Utils.AckType.NO_ACK,
-      Utils.AckGasParams(0, 0),
       destChainParams,
-      Utils.ContractCalls(payloads, addresses)
+      ourContractOnChains[chainType][chainId], // destination contract address
+      payload
     );
   }
 
@@ -97,27 +71,25 @@ contract XERC1155 is ERC1155, ICrossTalkApplication {
     string memory srcChainId,
     uint64 srcChainType
   ) external override returns (bytes memory) {
-    require(msg.sender == address(gatewayContract), "only gateway");
+    require(msg.sender == gatewayContract);
     require(
       keccak256(srcContractAddress) ==
-        keccak256(ourContractOnChains[srcChainType][srcChainId]),
-      "only our contract"
+        keccak256(ourContractOnChains[srcChainType][srcChainId])
     );
 
     TransferParams memory transferParams = abi.decode(
       payload,
       (TransferParams)
     );
-
     _mintBatch(
       // converting the address of recipient from bytes to address
-      toAddress(transferParams.recipient),
+      CrossTalkUtils.toAddress(transferParams.recipient),
       transferParams.nftIds,
       transferParams.nftAmounts,
       transferParams.nftData
     );
 
-    return "";
+    return abi.encode(srcChainId, srcChainType);
   }
 
   function handleCrossTalkAck(
@@ -134,15 +106,5 @@ contract XERC1155 is ERC1155, ICrossTalkApplication {
       mstore(0x40, add(m, 52))
       b := m
     }
-  }
-
-  function toAddress(
-    bytes memory _bytes
-  ) public pure returns (address contractAddress) {
-    bytes20 srcTokenAddress;
-    assembly {
-      srcTokenAddress := mload(add(_bytes, 0x20))
-    }
-    contractAddress = address(srcTokenAddress);
   }
 }

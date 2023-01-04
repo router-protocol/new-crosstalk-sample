@@ -1,12 +1,12 @@
-//SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: Unlicensed
 pragma solidity >=0.8.0 <0.9.0;
 
-import "evm-gateway-contract/contracts/IGateway.sol";
 import "evm-gateway-contract/contracts/ICrossTalkApplication.sol";
 import "evm-gateway-contract/contracts/Utils.sol";
+import "./CrossTalkUtils.sol";
 
 contract PingPong is ICrossTalkApplication {
-  IGateway public gatewayContract;
+  address public gatewayContract;
   string public greeting;
   uint64 public lastEventIdentifier;
   uint64 public destGasLimit;
@@ -21,7 +21,7 @@ contract PingPong is ICrossTalkApplication {
     uint64 _destGasLimit,
     uint64 _ackGasLimit
   ) {
-    gatewayContract = IGateway(gatewayAddress);
+    gatewayContract = gatewayAddress;
     destGasLimit = _destGasLimit;
     ackGasLimit = _ackGasLimit;
   }
@@ -31,52 +31,29 @@ contract PingPong is ICrossTalkApplication {
     string memory chainId,
     uint64 destGasPrice,
     uint64 ackGasPrice,
-    address destinationContractAddress,
+    bytes memory destinationContractAddress,
     string memory str,
     uint64 expiryDurationInSeconds
   ) public payable {
     bytes memory payload = abi.encode(str);
-
     uint64 expiryTimestamp = uint64(block.timestamp) + expiryDurationInSeconds;
+    Utils.DestinationChainParams memory destChainParams = Utils
+      .DestinationChainParams(destGasLimit, destGasPrice, chainType, chainId);
 
-    bytes[] memory addresses = new bytes[](1);
-    addresses[0] = toBytes(destinationContractAddress);
-
-    bytes[] memory payloads = new bytes[](1);
-    payloads[0] = payload;
-
-    _pingDestination(
-      expiryTimestamp,
-      destGasPrice,
-      ackGasPrice,
-      chainType,
-      chainId,
-      payloads,
-      addresses
+    Utils.AckType ackType = Utils.AckType.ACK_ON_SUCCESS;
+    Utils.AckGasParams memory ackGasParams = Utils.AckGasParams(
+      ackGasLimit,
+      ackGasPrice
     );
-  }
 
-  function _pingDestination(
-    uint64 expiryTimestamp,
-    uint64 destGasPrice,
-    uint64 ackGasPrice,
-    uint64 chainType,
-    string memory chainId,
-    bytes[] memory payloads,
-    bytes[] memory addresses
-  ) internal {
-    lastEventIdentifier = gatewayContract.requestToDest(
+    lastEventIdentifier = CrossTalkUtils.singleRequestWithAcknowledgement(
+      gatewayContract,
       expiryTimestamp,
-      false,
-      Utils.AckType.ACK_ON_SUCCESS,
-      Utils.AckGasParams(ackGasLimit, ackGasPrice),
-      Utils.DestinationChainParams(
-        destGasLimit,
-        destGasPrice,
-        chainType,
-        chainId
-      ),
-      Utils.ContractCalls(payloads, addresses)
+      ackType,
+      ackGasParams,
+      destChainParams,
+      destinationContractAddress,
+      payload
     );
   }
 
@@ -86,7 +63,7 @@ contract PingPong is ICrossTalkApplication {
     string memory srcChainId,
     uint64 srcChainType
   ) external override returns (bytes memory) {
-    require(msg.sender == address(gatewayContract));
+    require(msg.sender == gatewayContract);
 
     string memory sampleStr = abi.decode(payload, (string));
 
@@ -95,7 +72,6 @@ contract PingPong is ICrossTalkApplication {
     ) {
       revert CustomError("String should not be empty");
     }
-
     greeting = sampleStr;
     return abi.encode(srcChainId, srcChainType);
   }
@@ -105,7 +81,7 @@ contract PingPong is ICrossTalkApplication {
     bool[] memory execFlags,
     bytes[] memory execData
   ) external override {
-    require(lastEventIdentifier == eventIdentifier, "wrong event identifier");
+    require(lastEventIdentifier == eventIdentifier);
     bytes memory _execData = abi.decode(execData[0], (bytes));
 
     (string memory chainID, uint64 chainType) = abi.decode(
@@ -113,17 +89,9 @@ contract PingPong is ICrossTalkApplication {
       (string, uint64)
     );
 
+    // emits the event identifier and true as execFlags[0]
     emit ExecutionStatus(eventIdentifier, execFlags[0]);
+    // emits the source chain Id and type that it gets back from the dest chain
     emit ReceivedSrcChainIdAndType(chainType, chainID);
-  }
-
-  function toBytes(address a) public pure returns (bytes memory b) {
-    assembly {
-      let m := mload(0x40)
-      a := and(a, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
-      mstore(add(m, 20), xor(0x140000000000000000000000000000000000000000, a))
-      mstore(0x40, add(m, 52))
-      b := m
-    }
   }
 }
