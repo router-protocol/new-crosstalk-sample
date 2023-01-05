@@ -3,7 +3,7 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "evm-gateway-contract/contracts/ICrossTalkApplication.sol";
 import "evm-gateway-contract/contracts/Utils.sol";
-import "./CrossTalkUtils.sol";
+import "@routerprotocol/router-crosstalk-utils/contracts/CrossTalkUtils.sol";
 
 contract PingPong is ICrossTalkApplication {
   address public gatewayContract;

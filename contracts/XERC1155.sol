@@ -3,7 +3,7 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "evm-gateway-contract/contracts/ICrossTalkApplication.sol";
 import "evm-gateway-contract/contracts/Utils.sol";
-import "./CrossTalkUtils.sol";
+import "@routerprotocol/router-crosstalk-utils/contracts/CrossTalkUtils.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
 contract XERC1155 is ERC1155, ICrossTalkApplication {
