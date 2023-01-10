@@ -272,7 +272,7 @@ const config = {
       // https://hardhat.org/hardhat-network/#solidity-optimizer-support
       optimizer: {
         enabled: true,
-        runs: 50,
+        runs: 50000,
       },
     },
   },
@@ -287,11 +287,10 @@ const config = {
   etherscan: {
     apiKey: {
       kovan: process.env.MAINNET_ETHERSCAN_KEY,
-      polygonMumbai: process.env.POLYGON_ETHERSCAN_KEY,
-      polygon: process.env.POLYGON_ETHERSCAN_KEY,
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY,
+      polygon: process.env.POLYGONSCAN_API_KEY,
       bsc: process.env.BSC_ETHERSCAN_KEY,
       avalanche: "QAE2JD7XIBCYB6Z6GSKNJIHKZ8XGVYM8AI",
-
       opera: process.env.FTMSCAN_KEY,
       arbitrumOne: process.env.ARBITRUM_KEY,
       optimisticEthereum: process.env.OPTIMISM_KEY,
