@@ -8,9 +8,7 @@ import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
 import { NetworkUserConfig } from "hardhat/types";
 import "@nomiclabs/hardhat-etherscan";
-import "./tasks/storeDeployments";
-import "./tasks/deploy/XERC1155";
-import "./tasks/deploy/PingPong";
+import "./tasks";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
@@ -287,8 +285,8 @@ const config = {
   etherscan: {
     apiKey: {
       kovan: process.env.MAINNET_ETHERSCAN_KEY,
-      polygonMumbai: process.env.POLYGON_ETHERSCAN_KEY,
-      polygon: process.env.POLYGON_ETHERSCAN_KEY,
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY,
+      polygon: process.env.POLYGONSCAN_API_KEY,
       bsc: process.env.BSC_ETHERSCAN_KEY,
       avalanche: "QAE2JD7XIBCYB6Z6GSKNJIHKZ8XGVYM8AI",
 
