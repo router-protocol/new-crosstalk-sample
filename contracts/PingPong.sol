@@ -72,7 +72,7 @@ contract PingPong is ICrossTalkApplication {
         address destinationContractAddress,
         string memory str,
         uint64 expiryDurationInSeconds
-    ) public payable {
+    ) public payable returns (uint64) {
         currentRequestId++;
         // creating the payload to be sent to the destination chain
         bytes memory payload = abi.encode(currentRequestId, str);
@@ -98,6 +98,8 @@ contract PingPong is ICrossTalkApplication {
             payloads,
             addresses
         );
+
+        return currentRequestId;
     }
 
     function _pingDestination(
