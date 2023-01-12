@@ -115,6 +115,8 @@ function getChainConfig(network: keyof typeof chainIds): NetworkUserConfig {
     // url = "https://goerli.infura.io/v3/d19691ef05dc486a820545f387b66efc";
     url = "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161";
     // console.log(url, process.env.PRIVATE_KEY)
+  } else if (network == "bscTestnet") {
+    url = "https://bsc-testnet.public.blastapi.io";
   }
   return {
     // accounts: {
@@ -210,16 +212,6 @@ const config = {
       chainId: chainIds["rinkeby"],
       url: "https://rinkeby.infura.io/v3/" + infuraApiKey + "",
     },
-    bscTestnet: {
-      saveDeployments: true,
-      accounts: {
-        initialIndex: 0,
-        mnemonic,
-        // path: "m/44'/60'/0'/0",
-      },
-      chainId: chainIds["bscTestnet"],
-      url: "https://data-seed-prebsc-1-s1.binance.org:8545",
-    },
     polygonMumbai: {
       saveDeployments: true,
       accounts: {
@@ -249,6 +241,7 @@ const config = {
     fuji: getChainConfig("fuji"),
     goerli: getChainConfig("goerli"),
     mumbai: getChainConfig("mumbai"),
+    bsctestnet: getChainConfig("bscTestnet"),
   },
   paths: {
     artifacts: "./artifacts",
@@ -286,10 +279,9 @@ const config = {
   },
   etherscan: {
     apiKey: {
-      kovan: process.env.MAINNET_ETHERSCAN_KEY,
-      polygonMumbai: process.env.POLYGONSCAN_API_KEY,
+      kovan: process.env.ETHERSCAN_API_KEY,
       polygon: process.env.POLYGONSCAN_API_KEY,
-      bsc: process.env.BSC_ETHERSCAN_KEY,
+      bsc: process.env.BSCSCAN_API_KEY,
       avalanche: "QAE2JD7XIBCYB6Z6GSKNJIHKZ8XGVYM8AI",
       opera: process.env.FTMSCAN_KEY,
       arbitrumOne: process.env.ARBITRUM_KEY,
@@ -299,8 +291,10 @@ const config = {
       harmony: process.env.HARMONY_KEY,
       moonbeam: process.env.MOONBEAM_ETHERSCAN_KEY,
       kava: process.env.MOONBEAM_ETHERSCAN_KEY,
-      goerli: process.env.MAINNET_ETHERSCAN_KEY,
+      goerli: process.env.ETHERSCAN_API_KEY,
       avalancheFujiTestnet: "QAE2JD7XIBCYB6Z6GSKNJIHKZ8XGVYM8AI",
+      bscTestnet: process.env.BSCSCAN_API_KEY,
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY,
     },
 
     customChains: [
