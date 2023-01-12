@@ -125,11 +125,12 @@ contract XERC1155 is ERC1155, ICrossTalkApplication {
         uint64 srcChainType
     ) external override returns (bytes memory) {
         // ensuring that only the gateway contract can send the cross-chain handling request
-        require(msg.sender == gatewayContract);
+        require(msg.sender == gatewayContract, "only gateway");
         // ensuring that our NFT contract initiated this request from the source chain
         require(
             keccak256(srcContractAddress) ==
-                keccak256(ourContractOnChains[srcChainType][srcChainId])
+                keccak256(ourContractOnChains[srcChainType][srcChainId]),
+            "only our contract on source chain"
         );
 
         // decoding our payload
