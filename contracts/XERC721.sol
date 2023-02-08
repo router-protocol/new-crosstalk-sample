@@ -4,13 +4,13 @@ pragma solidity >=0.8.0 <0.9.0;
 import "evm-gateway-contract/contracts/ICrossTalkApplication.sol";
 import "evm-gateway-contract/contracts/Utils.sol";
 import "@routerprotocol/router-crosstalk-utils/contracts/CrossTalkUtils.sol";
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-/// @title XERC1155
+/// @title XERC721
 /// @author Shivam Agrawal
-/// @notice A cross-chain ERC-1155 smart contract to demonstrate how one can create
+/// @notice A cross-chain ERC-721 smart contract to demonstrate how one can create
 /// cross-chain NFT contracts using Router CrossTalk.
-contract XERC1155 is ERC1155, ICrossTalkApplication {
+contract XERC721 is ERC721, ICrossTalkApplication {
     // address of the admin
     address public admin;
 
@@ -23,26 +23,23 @@ contract XERC1155 is ERC1155, ICrossTalkApplication {
     // chain type + chain id => address of our contract in bytes
     mapping(uint64 => mapping(string => bytes)) public ourContractOnChains;
 
-    // transfer params struct where we specify which NFTs should be transferred to
+    // transfer params struct where we specify which NFT should be transferred to
     // the destination chain and to which address
     struct TransferParams {
-        uint256[] nftIds;
-        uint256[] nftAmounts;
-        bytes nftData;
+        uint256 nftId;
         bytes recipient;
     }
 
-    constructor(
-        string memory _uri,
-        address payable gatewayAddress,
-        uint64 _destGasLimit
-    ) ERC1155(_uri) {
+    constructor(address payable gatewayAddress, uint64 _destGasLimit)
+        ERC721("ERC721", "ERC721")
+    {
         gatewayContract = gatewayAddress;
         destGasLimit = _destGasLimit;
         admin = msg.sender;
 
-        // minting ourselves some NFTs so that we can test out the contracts
-        _mint(msg.sender, 1, 10, "");
+        // mint only on one chain.
+        // minting ourselves some NFTs so that we can test out the contracts.
+        _mint(msg.sender, 1);
     }
 
     /// @notice function to set the address of our NFT contracts on different chains.
@@ -82,12 +79,13 @@ contract XERC1155 is ERC1155, ICrossTalkApplication {
             "contract on dest not set"
         );
 
-        // burning the NFTs from the address of the user calling _burnBatch function
-        _burnBatch(
-            msg.sender,
-            transferParams.nftIds,
-            transferParams.nftAmounts
+        require(
+            _ownerOf(transferParams.nftId) == msg.sender,
+            "caller is not the owner"
         );
+
+        // burning the NFT from the address of the user calling _burn function
+        _burn(transferParams.nftId);
 
         // sending the transfer params struct to the destination chain as payload.
         bytes memory payload = abi.encode(transferParams);
@@ -139,13 +137,10 @@ contract XERC1155 is ERC1155, ICrossTalkApplication {
             (TransferParams)
         );
 
-        // minting the recipient the respective token ids and amounts
-        _mintBatch(
-            // converting the address of recipient from bytes to address
+        // minting the recipient the respective token id
+        _mint(
             CrossTalkUtils.toAddress(transferParams.recipient),
-            transferParams.nftIds,
-            transferParams.nftAmounts,
-            transferParams.nftData //0x
+            transferParams.nftId
         );
 
         // since we don't want to return any data, we will just return empty string
