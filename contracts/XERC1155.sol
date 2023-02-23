@@ -7,7 +7,6 @@ import "@routerprotocol/router-crosstalk-utils/contracts/CrossTalkUtils.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
 /// @title XERC1155
-/// @author Shivam Agrawal
 /// @notice A cross-chain ERC-1155 smart contract to demonstrate how one can create
 /// cross-chain NFT contracts using Router CrossTalk.
 contract XERC1155 is ERC1155, ICrossTalkApplication {
@@ -103,10 +102,16 @@ contract XERC1155 is ERC1155, ICrossTalkApplication {
                 chainId
             );
 
+        Utils.RequestArgs memory requestArgs = Utils.RequestArgs(
+            expiryTimestamp,
+            false,
+            Utils.FeePayer.APP
+        );
+
         // creating a cross-chain communication request to the destination chain.
         CrossTalkUtils.singleRequestWithoutAcknowledgement(
             gatewayContract,
-            expiryTimestamp,
+            requestArgs,
             destChainParams,
             ourContractOnChains[chainType][chainId], // destination contract address
             payload
@@ -145,7 +150,7 @@ contract XERC1155 is ERC1155, ICrossTalkApplication {
             CrossTalkUtils.toAddress(transferParams.recipient),
             transferParams.nftIds,
             transferParams.nftAmounts,
-            transferParams.nftData //0x
+            transferParams.nftData
         );
 
         // since we don't want to return any data, we will just return empty string

@@ -55,7 +55,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.0",
-    "evm-gateway-contract": "^1.0.4",
-    "@routerprotocol/router-crosstalk-utils": "^0.1.1"
+    "@routerprotocol/router-crosstalk-utils": "^1.0.1",
+    "evm-gateway-contract": "^1.0.5"
   }
 }

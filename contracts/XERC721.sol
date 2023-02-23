@@ -93,6 +93,7 @@ contract XERC721 is ERC721, ICrossTalkApplication {
         // creating the expiry timestamp
         uint64 expiryTimestamp = uint64(block.timestamp) +
             expiryDurationInSeconds;
+
         Utils.DestinationChainParams memory destChainParams = Utils
             .DestinationChainParams(
                 destGasLimit,
@@ -101,10 +102,16 @@ contract XERC721 is ERC721, ICrossTalkApplication {
                 chainId
             );
 
+        Utils.RequestArgs memory requestArgs = Utils.RequestArgs(
+            expiryTimestamp,
+            false,
+            Utils.FeePayer.APP
+        );
+
         // creating a cross-chain communication request to the destination chain.
         CrossTalkUtils.singleRequestWithoutAcknowledgement(
             gatewayContract,
-            expiryTimestamp,
+            requestArgs,
             destChainParams,
             ourContractOnChains[chainType][chainId], // destination contract address
             payload

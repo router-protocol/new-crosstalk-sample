@@ -93,9 +93,15 @@ contract PingPong is ICrossTalkApplication {
             ackGasPrice
         );
 
+        Utils.RequestArgs memory requestArgs = Utils.RequestArgs(
+            uint64(block.timestamp) + expiryDurationInSeconds,
+            false,
+            Utils.FeePayer.APP
+        );
+
         CrossTalkUtils.singleRequestWithAcknowledgement(
             address(gatewayContract),
-            0,
+            requestArgs,
             Utils.AckType.ACK_ON_SUCCESS,
             ackGasParams,
             destChainParams,
