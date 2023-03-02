@@ -7,6 +7,7 @@ import "@routerprotocol/router-crosstalk-utils/contracts/CrossTalkUtils.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
 /// @title XERC1155
+/// @author Yashika Goyal
 /// @notice A cross-chain ERC-1155 smart contract to demonstrate how one can create
 /// cross-chain NFT contracts using Router CrossTalk.
 contract XERC1155 is ERC1155, ICrossTalkApplication {
