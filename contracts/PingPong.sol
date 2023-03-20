@@ -1,11 +1,8 @@
 //SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0 <0.9.0;
 
-import "evm-gateway-contract/contracts/IGateway.sol";
-import "evm-gateway-contract/contracts/ICrossTalkApplication.sol";
+import "@routerprotocol/evm-gateway-contracts/contracts/ICrossTalkApplication.sol";
 import "@routerprotocol/router-crosstalk-utils/contracts/CrossTalkUtils.sol";
-
-import "evm-gateway-contract/contracts/Utils.sol";
 
 /// @title PingPong
 /// @author Shivam Agrawal
@@ -85,7 +82,8 @@ contract PingPong is ICrossTalkApplication {
                 destGasLimit,
                 destGasPrice,
                 chainType,
-                chainId
+                chainId,
+                "0x" // asmAddress
             );
 
         Utils.AckGasParams memory ackGasParams = Utils.AckGasParams(

@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity >=0.8.0 <0.9.0;
 
-import "evm-gateway-contract/contracts/ICrossTalkApplication.sol";
-import "evm-gateway-contract/contracts/Utils.sol";
+import "@routerprotocol/evm-gateway-contracts/contracts/ICrossTalkApplication.sol";
 import "@routerprotocol/router-crosstalk-utils/contracts/CrossTalkUtils.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
@@ -30,9 +29,10 @@ contract XERC721 is ERC721, ICrossTalkApplication {
         bytes recipient;
     }
 
-    constructor(address payable gatewayAddress, uint64 _destGasLimit)
-        ERC721("ERC721", "ERC721")
-    {
+    constructor(
+        address payable gatewayAddress,
+        uint64 _destGasLimit
+    ) ERC721("ERC721", "ERC721") {
         gatewayContract = gatewayAddress;
         destGasLimit = _destGasLimit;
         admin = msg.sender;
@@ -99,7 +99,8 @@ contract XERC721 is ERC721, ICrossTalkApplication {
                 destGasLimit,
                 destGasPrice,
                 chainType,
-                chainId
+                chainId,
+                "0x" // asmAddress
             );
 
         Utils.RequestArgs memory requestArgs = Utils.RequestArgs(
