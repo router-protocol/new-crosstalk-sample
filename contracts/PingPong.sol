@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0 <0.9.0;
 
-import "evm-gateway-contract/contracts/IGateway.sol";
-import "evm-gateway-contract/contracts/ICrossTalkApplication.sol";
-import "evm-gateway-contract/contracts/Utils.sol";
+import "@routerprotocol/evm-gateway-contracts/contracts/IGateway.sol";
+import "@routerprotocol/evm-gateway-contracts/contracts/ICrossTalkApplication.sol";
+import "@routerprotocol/evm-gateway-contracts/contracts/Utils.sol";
 
 /// @title PingPong
 /// @author Yashika Goyal
@@ -112,18 +112,24 @@ contract PingPong is ICrossTalkApplication {
         bytes[] memory payloads,
         bytes[] memory addresses
     ) internal {
+        Utils.RequestArgs memory requestArgs = Utils.RequestArgs(
+            expiryTimestamp,
+            false,
+            Utils.FeePayer.APP
+        );
+
         // Calling the requestToDest function on the Router's Gateway contract to generate a
         // cross-chain request and storing the nonce returned into the lastEventIdentifier.
         gatewayContract.requestToDest(
-            expiryTimestamp,
-            false,
+            requestArgs,
             Utils.AckType.ACK_ON_SUCCESS,
             Utils.AckGasParams(ackGasLimit, ackGasPrice),
             Utils.DestinationChainParams(
                 destGasLimit,
                 destGasPrice,
                 chainType,
-                chainId
+                chainId,
+                "0x" // asmAddress
             ),
             Utils.ContractCalls(payloads, addresses)
         );
