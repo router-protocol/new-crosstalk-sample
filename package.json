@@ -55,6 +55,6 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.0",
-    "evm-gateway-contract": "^1.0.4"
+    "@routerprotocol/evm-gateway-contracts": "^1.0.5"
   }
 }

@@ -16,7 +16,12 @@ task("TASK_DEPLOY_PINGPONG").setAction(async function (
 
   console.log("Contract Deployment Started ");
   const PingPong = await hre.ethers.getContractFactory("PingPong");
-  const pingPong = await PingPong.deploy(gatewayContract, 1000000, 1000000);
+  const pingPong = await PingPong.deploy(
+    gatewayContract,
+    1000000,
+    1000000,
+    "router1z6ralzg5tsznq9s6xmutyeen7evylcj7harhmq"
+  );
   await pingPong.deployed();
 
   console.log(deployContract + " Contract deployed to: ", pingPong.address);

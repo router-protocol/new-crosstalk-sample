@@ -1045,11 +1045,16 @@
     "@types/web3" "1.0.19"
 
 "@openzeppelin/contracts-upgradeable@^4.7.3":
-  version "4.8.0"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.8.0.tgz#26688982f46969018e3ed3199e72a07c8d114275"
-  integrity sha512-5GeFgqMiDlqGT8EdORadp1ntGF0qzWZLmEY7Wbp/yVhN7/B3NNzCxujuI77ktlyG81N3CUZP8cZe3ZAQ/cW10w==
+  version "4.8.2"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.8.2.tgz#edef522bdbc46d478481391553bababdd2199e27"
+  integrity sha512-zIggnBwemUmmt9IS73qxi+tumALxCY4QEs3zLCII78k0Gfse2hAOdAkuAeLUzvWUpneMUfFE5sGHzEUSTvn4Ag==
 
-"@openzeppelin/contracts@^4.4.1", "@openzeppelin/contracts@^4.8.0":
+"@openzeppelin/contracts@^4.4.1":
+  version "4.8.2"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.8.2.tgz#d815ade0027b50beb9bcca67143c6bcc3e3923d6"
+  integrity sha512-kEUOgPQszC0fSYWpbh2kT94ltOJwj1qfT2DWo+zVttmGmf97JZ99LspePNaeeaLhCImaHVeBbjaQFZQn7+Zc5g==
+
+"@openzeppelin/contracts@^4.8.0":
   version "4.8.0"
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.8.0.tgz#6854c37df205dd2c056bdfa1b853f5d732109109"
   integrity sha512-AGuwhRRL+NaKx73WKRNzeCxOCOCxpaqF+kp8TJ89QzAipSwZy/NoflkWaL9bywXFRhIzXt8j38sfF7KBKCPWLw==
@@ -1113,6 +1118,14 @@
     hosted-git-info "^2.6.0"
     path-browserify "^1.0.0"
     url "^0.11.0"
+
+"@routerprotocol/evm-gateway-contracts@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@routerprotocol/evm-gateway-contracts/-/evm-gateway-contracts-1.0.5.tgz#a51063f0a6c85c318d74befd7db3fc30eee45821"
+  integrity sha512-l5DuN8VCgz+V8YXVKWZBoubNo8splh2EeUcFiSruNsmA+ZGbP3DCYJ+AKYAl12kNlozT9BTxYixl0f4Er75lHA==
+  dependencies:
+    "@openzeppelin/contracts" "^4.4.1"
+    "@openzeppelin/contracts-upgradeable" "^4.7.3"
 
 "@scure/base@~1.1.0":
   version "1.1.1"
@@ -4972,23 +4985,6 @@ events@^3.0.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
   integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
-
-evm-gateway-contract@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/evm-gateway-contract/-/evm-gateway-contract-1.0.1.tgz#151a26485bbdeb497c4bb925ea20c89ecbeaf211"
-  integrity sha512-VV5xdRr6NZ6jGE5N8fFxtL6n7RfEawqyb5QHSjZFJjyKPStvaqpHJU/b80uqoyYxfu6kUgJLN+ZaBCU1rFhGAg==
-  dependencies:
-    "@openzeppelin/contracts" "^4.4.1"
-    "@openzeppelin/contracts-upgradeable" "^4.7.3"
-
-evm-gateway-contract@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/evm-gateway-contract/-/evm-gateway-contract-1.0.3.tgz#e26647531a538bb19474f3c26c9681664f02bc2b"
-  integrity sha512-pKwwlb5/nAmaFUyNuGpxtRvOfqY/NQGuD8E6wvo0SKWGRiDFHofxevAWlwVEJv+7ilrrX6OpsEZ7LoE/xtN2nQ==
-  dependencies:
-    "@openzeppelin/contracts" "^4.4.1"
-    "@openzeppelin/contracts-upgradeable" "^4.7.3"
-    evm-gateway-contract "1.0.1"
 
 evp_bytestokey@^1.0.0, evp_bytestokey@^1.0.3:
   version "1.0.3"

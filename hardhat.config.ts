@@ -4,7 +4,6 @@ import "@typechain/hardhat";
 import "@openzeppelin/hardhat-upgrades";
 import "solidity-coverage";
 import { resolve } from "path";
-
 import { config as dotenvConfig } from "dotenv";
 import { NetworkUserConfig } from "hardhat/types";
 import "@nomiclabs/hardhat-etherscan";
@@ -61,8 +60,7 @@ function getChainConfig(network: keyof typeof chainIds): NetworkUserConfig {
     url =
       "https://polygon-mainnet.g.alchemy.com/v2/hCz4x1BLpLDP3NoomXivfaqND37qCSgS";
   } else if (network == "mumbai") {
-    url =
-      "https://polygon-mumbai.g.alchemy.com/v2/7PDGHtfRIuSxeCJwzBlDLqk_6I20AIvz";
+    url = "https://rpc.ankr.com/polygon_mumbai";
   } else if (network == "bsc") {
     url = "https://bsc-dataseed.binance.org/";
   } else if (network == "avalanche") {
@@ -108,7 +106,7 @@ function getChainConfig(network: keyof typeof chainIds): NetworkUserConfig {
     // console.log(url, process.env.PRIVATE_KEY)
   } else if (network == "fuji") {
     //1
-    url = "https://api.avax-test.network/ext/bc/C/rpc";
+    url = "https://rpc.ankr.com/avalanche_fuji";
     // console.log(url, process.env.PRIVATE_KEY)
   } else if (network == "goerli") {
     //1
@@ -128,8 +126,9 @@ function getChainConfig(network: keyof typeof chainIds): NetworkUserConfig {
     accounts: [`${process.env.PRIVATE_KEY}`],
     chainId: chainIds[network],
     url,
-    // gasPrice: network == "bsc" ? 20000000000 : 200000000000,
-    // gasPrice: 450_000_000_000
+    // gas: 10000000,
+    // // gasPrice: network == "bsc" ? 20000000000 : 200000000000,
+    // gasPrice: 4500000000,
   };
 }
 
