@@ -10,11 +10,11 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 /// @notice A cross-chain ERC-721 smart contract to demonstrate how one can create
 /// cross-chain NFT contracts using Router CrossTalk.
 contract XERC721 is ERC721, ICrossTalkApplication {
-    // address of the admin
-    address public admin;
+    // address of the owner
+    address public owner;
 
     // address of the gateway contract
-    address public gatewayContract;
+    IGateway public gatewayContract;
 
     // gas limit required to handle cross-chain request on the destination chain
     uint64 public destGasLimit;
@@ -31,15 +31,32 @@ contract XERC721 is ERC721, ICrossTalkApplication {
 
     constructor(
         address payable gatewayAddress,
-        uint64 _destGasLimit
+        uint64 _destGasLimit,
+        string memory feePayerAddress
     ) ERC721("ERC721", "ERC721") {
-        gatewayContract = gatewayAddress;
+        gatewayContract = IGateway(gatewayAddress);
         destGasLimit = _destGasLimit;
-        admin = msg.sender;
+        owner = msg.sender;
 
         // mint only on one chain.
         // minting ourselves some NFTs so that we can test out the contracts.
         _mint(msg.sender, 1);
+
+        gatewayContract.setDappMetadata(feePayerAddress);
+    }
+
+    /// @notice function to set the fee payer address on Router Chain.
+    /// @param feePayerAddress address of the fee payer on Router Chain.
+    function setDappMetadata(string memory feePayerAddress) external {
+        require(msg.sender == owner, "only owner");
+        gatewayContract.setDappMetadata(feePayerAddress);
+    }
+
+    /// @notice function to set the Router Gateway Contract.
+    /// @param gateway address of the gateway contract.
+    function setGateway(address gateway) external {
+        require(msg.sender == owner, "only owner");
+        gatewayContract = IGateway(gateway);
     }
 
     /// @notice function to set the address of our NFT contracts on different chains.
@@ -52,7 +69,7 @@ contract XERC721 is ERC721, ICrossTalkApplication {
         string memory chainId,
         address contractAddress
     ) external {
-        require(msg.sender == admin, "only admin");
+        require(msg.sender == owner, "only owner");
         ourContractOnChains[chainType][chainId] = CrossTalkUtils.toBytes(
             contractAddress
         );
@@ -105,13 +122,12 @@ contract XERC721 is ERC721, ICrossTalkApplication {
 
         Utils.RequestArgs memory requestArgs = Utils.RequestArgs(
             expiryTimestamp,
-            false,
-            Utils.FeePayer.APP
+            false
         );
 
         // creating a cross-chain communication request to the destination chain.
         CrossTalkUtils.singleRequestWithoutAcknowledgement(
-            gatewayContract,
+            address(gatewayContract),
             requestArgs,
             destChainParams,
             ourContractOnChains[chainType][chainId], // destination contract address
@@ -131,7 +147,7 @@ contract XERC721 is ERC721, ICrossTalkApplication {
         uint64 srcChainType
     ) external override returns (bytes memory) {
         // ensuring that only the gateway contract can send the cross-chain handling request
-        require(msg.sender == gatewayContract, "only gateway");
+        require(msg.sender == address(gatewayContract), "only gateway");
         // ensuring that our NFT contract initiated this request from the source chain
         require(
             keccak256(srcContractAddress) ==

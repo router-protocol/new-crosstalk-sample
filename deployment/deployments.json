@@ -1,17 +1,20 @@
 {
     "5": {
-        "gatewayContract": "0x13Bcb27133Dd8052e0173fe70c717aB8C45bc26E"
+        "gatewayContract": "0x13Bcb27133Dd8052e0173fe70c717aB8C45bc26E",
+        "feePayerAddress": "router1z6ralzg5tsznq9s6xmutyeen7evylcj7harhmq"
     },
     "43113": {
-        "gatewayContract": "0x4886fB1D678c7598C43E05bb5F24773fA8F0Ff3e",
+        "gatewayContract": "0x0D35CA006C841d45978d2ce33bb81CB587c17496",
         "PingPong": "0x9BDA8dFa3123fae6CFF77EcB4a51975Dc5B41e57",
         "XERC1155": "0x063CfF2eA815c26d207bDE14c58E5050FB7d6424",
-        "XERC721": "0xbeFCe049582F0C87d7F51Aff63D2C372caA20Fc0"
+        "XERC721": "0xbeFCe049582F0C87d7F51Aff63D2C372caA20Fc0",
+        "feePayerAddress": "router1z6ralzg5tsznq9s6xmutyeen7evylcj7harhmq"
     },
     "80001": {
-        "gatewayContract": "0xB139915AE11f6f0ACd05C8dB85E8ED1bE1c7c17d",
+        "gatewayContract": "0x732BB75C0fa2823Ef9CEB9150cC1855C0211b9a3",
         "PingPong": "0xF0AC02DE783e51dcFAe80f8Cd6407AE1A17bDb0E",
         "XERC1155": "0x4a0394c6E10a4F67A8201592C90cdCb814D2F181",
-        "XERC721": "0x1C777F8fEDeE62D36e9131809F5833cE83A4964E"
+        "XERC721": "0x1C777F8fEDeE62D36e9131809F5833cE83A4964E",
+        "feePayerAddress": "router1z6ralzg5tsznq9s6xmutyeen7evylcj7harhmq"
     }
 }

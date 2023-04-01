@@ -9,6 +9,7 @@ import "@routerprotocol/router-crosstalk-utils/contracts/CrossTalkUtils.sol";
 /// @notice This is a cross-chain ping pong smart contract to demonstrate how one can
 /// utilise Router CrossTalk for cross-chain transactions.
 contract PingPong is ICrossTalkApplication {
+    address public owner;
     uint64 public currentRequestId;
 
     // srcChainType + srcChainId + requestId => pingFromSource
@@ -46,11 +47,30 @@ contract PingPong is ICrossTalkApplication {
     constructor(
         address payable gatewayAddress,
         uint64 _destGasLimit,
-        uint64 _ackGasLimit
+        uint64 _ackGasLimit,
+        string memory feePayerAddress
     ) {
+        owner = msg.sender;
+
         gatewayContract = IGateway(gatewayAddress);
         destGasLimit = _destGasLimit;
         ackGasLimit = _ackGasLimit;
+
+        gatewayContract.setDappMetadata(feePayerAddress);
+    }
+
+    /// @notice function to set the fee payer address on Router Chain.
+    /// @param feePayerAddress address of the fee payer on Router Chain.
+    function setDappMetadata(string memory feePayerAddress) external {
+        require(msg.sender == owner, "only owner");
+        gatewayContract.setDappMetadata(feePayerAddress);
+    }
+
+    /// @notice function to set the Router Gateway Contract.
+    /// @param gateway address of the gateway contract.
+    function setGateway(address gateway) external {
+        require(msg.sender == owner, "only owner");
+        gatewayContract = IGateway(gateway);
     }
 
     /// @notice function to generate a cross-chain request to ping a destination chain contract.
@@ -93,8 +113,7 @@ contract PingPong is ICrossTalkApplication {
 
         Utils.RequestArgs memory requestArgs = Utils.RequestArgs(
             uint64(block.timestamp) + expiryDurationInSeconds,
-            false,
-            Utils.FeePayer.APP
+            false
         );
 
         CrossTalkUtils.singleRequestWithAcknowledgement(

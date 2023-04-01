@@ -1159,23 +1159,23 @@
     path-browserify "^1.0.0"
     url "^0.11.0"
 
-"@routerprotocol/evm-gateway-contracts@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@routerprotocol/evm-gateway-contracts/-/evm-gateway-contracts-1.0.2.tgz#5185f404ee9b936dccff4af7b69fbe9968f992b4"
-  integrity sha512-/xRyxgSuPMhb/+ZTWYXNL5lOzpQa1W4+Iw2CSudSFwuMYa4YT0jTLBSv2S1Zef7hmBm7uKhjnZQc/2rjlI/mHA==
+"@routerprotocol/evm-gateway-contracts@1.0.5", "@routerprotocol/evm-gateway-contracts@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@routerprotocol/evm-gateway-contracts/-/evm-gateway-contracts-1.0.5.tgz#a51063f0a6c85c318d74befd7db3fc30eee45821"
+  integrity sha512-l5DuN8VCgz+V8YXVKWZBoubNo8splh2EeUcFiSruNsmA+ZGbP3DCYJ+AKYAl12kNlozT9BTxYixl0f4Er75lHA==
   dependencies:
     "@openzeppelin/contracts" "^4.4.1"
     "@openzeppelin/contracts-upgradeable" "^4.7.3"
 
-"@routerprotocol/router-crosstalk-utils@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@routerprotocol/router-crosstalk-utils/-/router-crosstalk-utils-1.0.3.tgz#6e3b69046aacdfaa3bbd8f6c71e13c24a51347c2"
-  integrity sha512-7QgI9GURAj/0XLnkN5VZZbvm6jmQA/aUZoTnUKACAeqdN9PbN5t4KyVNBpurnit9sVdrmaE1Y00mNa0lyMLXaA==
+"@routerprotocol/router-crosstalk-utils@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@routerprotocol/router-crosstalk-utils/-/router-crosstalk-utils-1.0.5.tgz#4b42ff84bf9203445f021bb3e7a0739425f19bb0"
+  integrity sha512-ja0ln/vrOZhiYYqCzfynrlWl0Cj+SRsE7LFWq2Kyr1lhCJsN2QASjx9eZEZyI/sISO5sfg5p6Qreg/ajnGBZWA==
   dependencies:
     "@nomicfoundation/hardhat-chai-matchers" "^1.0.5"
     "@nomiclabs/hardhat-ethers" "^2.2.1"
     "@nomiclabs/hardhat-etherscan" "^3.1.4"
-    "@routerprotocol/evm-gateway-contracts" "^1.0.2"
+    "@routerprotocol/evm-gateway-contracts" "1.0.5"
     "@typechain/ethers-v5" "^10.2.0"
     "@typechain/hardhat" "^6.1.5"
     chai "^4.3.7"
