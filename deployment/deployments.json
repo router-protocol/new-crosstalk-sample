@@ -8,13 +8,15 @@
         "PingPong": "0x56b2fc450BfE527E19772688aB203D13060505C7"
     },
     "43113": {
-        "gatewayContract": "0x0D35CA006C841d45978d2ce33bb81CB587c17496",
+        "gatewayContract": "0x48F31b40050BAE47D62e70e904f143d89B1c2746",
         "PingPong": "0x3bC5082904920e91B786dB0eACd356D73a7a646F",
-        "XERC1155": "0xAdC1247871b11eaaEb498e8D7F6A769B42460022"
+        "XERC1155": "0xAdC1247871b11eaaEb498e8D7F6A769B42460022",
+        "feePayer": "router1z6ralzg5tsznq9s6xmutyeen7evylcj7harhmq"
     },
     "80001": {
-        "gatewayContract": "0x732BB75C0fa2823Ef9CEB9150cC1855C0211b9a3",
+        "gatewayContract": "0xA1E3291575de4121BA7D04988e25dC0b5f25d9e6",
         "PingPong": "0x823AfEf1f1BBC41E22E6e039C8f3f2b320fAaE8d",
-        "XERC1155": "0x7F4459a68AE7C0546812Ca178EE2B291d7366F99"
+        "XERC1155": "0x7F4459a68AE7C0546812Ca178EE2B291d7366F99",
+        "feePayer": "router1z6ralzg5tsznq9s6xmutyeen7evylcj7harhmq"
     }
 }

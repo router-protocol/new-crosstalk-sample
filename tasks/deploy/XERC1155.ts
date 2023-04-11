@@ -11,6 +11,7 @@ task("TASK_DEPLOY_XERC1155").setAction(async function (
   const deployments = require("../../deployment/deployments.json");
 
   const gatewayContract = deployments[chainId].gatewayContract;
+  const feePayer = deployments[chainId].feePayer;
 
   const deployContract = "XERC1155";
 
@@ -20,7 +21,7 @@ task("TASK_DEPLOY_XERC1155").setAction(async function (
     "uri",
     gatewayContract,
     1000000,
-    "router1z6ralzg5tsznq9s6xmutyeen7evylcj7harhmq"
+    feePayer
   );
   await erc1155.deployed();
 

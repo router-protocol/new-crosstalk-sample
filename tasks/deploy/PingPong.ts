@@ -11,6 +11,7 @@ task("TASK_DEPLOY_PINGPONG").setAction(async function (
   const deployments = require("../../deployment/deployments.json");
 
   const gatewayContract = deployments[chainId].gatewayContract;
+  const feePayer = deployments[chainId].feePayer;
 
   const deployContract = "PingPong";
 
@@ -20,7 +21,7 @@ task("TASK_DEPLOY_PINGPONG").setAction(async function (
     gatewayContract,
     1000000,
     1000000,
-    "router1z6ralzg5tsznq9s6xmutyeen7evylcj7harhmq"
+    feePayer
   );
   await pingPong.deployed();
 
