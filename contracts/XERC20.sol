@@ -109,7 +109,7 @@ contract XERC20 is ERC20, ICrossTalkApplication {
                 destGasPrice,
                 chainType,
                 chainId,
-                "0x" // asmAddress
+                "" // asmAddress
             );
 
         /// requestArgs consists of expiryTimestamp, isAtomicCalls boolean and feePayerEnum.

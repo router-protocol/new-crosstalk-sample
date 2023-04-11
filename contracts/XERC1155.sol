@@ -117,7 +117,7 @@ contract XERC1155 is ERC1155, ICrossTalkApplication {
                 destGasPrice,
                 chainType,
                 chainId,
-                "0x" // admAddress
+                "" // admAddress
             );
 
         Utils.RequestArgs memory requestArgs = Utils.RequestArgs(

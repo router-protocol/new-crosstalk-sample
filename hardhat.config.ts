@@ -59,8 +59,7 @@ function getChainConfig(network: keyof typeof chainIds): NetworkUserConfig {
     url =
       "https://polygon-mainnet.g.alchemy.com/v2/hCz4x1BLpLDP3NoomXivfaqND37qCSgS";
   } else if (network == "mumbai") {
-    url =
-      "https://polygon-mumbai.g.alchemy.com/v2/7PDGHtfRIuSxeCJwzBlDLqk_6I20AIvz";
+    url = "https://matic-mumbai.chainstacklabs.com";
   } else if (network == "bsc") {
     url = "https://bsc-dataseed.binance.org/";
   } else if (network == "avalanche") {
@@ -226,7 +225,7 @@ const config = {
         // path: "m/44'/60'/0'/0",
       },
       chainId: chainIds["mumbai"],
-      url: "https://polygon-mumbai.g.alchemy.com/v2/BZ0E4emoGVd4i2_R6I_BcEbqAecpv7Gf",
+      url: "https://matic-mumbai.chainstacklabs.com",
     },
 
     kovan: getChainConfig("kovan"),

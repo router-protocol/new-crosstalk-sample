@@ -117,7 +117,7 @@ contract XERC721 is ERC721, ICrossTalkApplication {
                 destGasPrice,
                 chainType,
                 chainId,
-                "0x" // asmAddress
+                "" // asmAddress
             );
 
         Utils.RequestArgs memory requestArgs = Utils.RequestArgs(

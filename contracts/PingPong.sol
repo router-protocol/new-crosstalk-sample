@@ -103,7 +103,7 @@ contract PingPong is ICrossTalkApplication {
                 destGasPrice,
                 chainType,
                 chainId,
-                "0x" // asmAddress
+                "" // asmAddress
             );
 
         Utils.AckGasParams memory ackGasParams = Utils.AckGasParams(
