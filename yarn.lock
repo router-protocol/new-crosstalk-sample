@@ -1167,6 +1167,14 @@
     "@openzeppelin/contracts" "^4.4.1"
     "@openzeppelin/contracts-upgradeable" "^4.7.3"
 
+"@routerprotocol/evm-gateway-contracts@1.1.6":
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/@routerprotocol/evm-gateway-contracts/-/evm-gateway-contracts-1.1.6.tgz#1a4477f1b4b69818135b165c117d0f220b89cf8c"
+  integrity sha512-JzLs1hICSxQnbNB6abB629O67l+QOCKCV4sSMOvHOAM/HkMHRtUtCNKPyJCaKJc1jkSoW16oRYhqZHMn3oMSCg==
+  dependencies:
+    "@openzeppelin/contracts" "^4.4.1"
+    "@openzeppelin/contracts-upgradeable" "^4.7.3"
+
 "@routerprotocol/router-crosstalk-utils@^1.0.6":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@routerprotocol/router-crosstalk-utils/-/router-crosstalk-utils-1.0.6.tgz#f204f39ef8a19dd0311a605156b8875f7428875d"
