@@ -11,13 +11,12 @@ task("TASK_DEPLOY_XERC721").setAction(async function (
   const deployments = require("../../deployment/deployments.json");
 
   const gatewayContract = deployments[chainId].gatewayContract;
-  const feePayerAddress = deployments[chainId].feePayerAddress;
 
   const deployContract = "XERC721";
 
   console.log("Contract Deployment Started ");
   const Erc721 = await hre.ethers.getContractFactory("XERC721");
-  const erc721 = await Erc721.deploy(gatewayContract, 1000000, feePayerAddress);
+  const erc721 = await Erc721.deploy(gatewayContract);
   await erc721.deployed();
 
   console.log(deployContract + " Contract deployed to: ", erc721.address);

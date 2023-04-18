@@ -11,18 +11,13 @@ task("TASK_DEPLOY_PINGPONG").setAction(async function (
   const deployments = require("../../deployment/deployments.json");
 
   const gatewayContract = deployments[chainId].gatewayContract;
-  const feePayerAddress = deployments[chainId].feePayerAddress;
+  // const feePayerAddress = deployments[chainId].feePayerAddress;
 
   const deployContract = "PingPong";
 
   console.log("Contract Deployment Started ");
   const PingPong = await hre.ethers.getContractFactory("PingPong");
-  const pingPong = await PingPong.deploy(
-    gatewayContract,
-    1000000,
-    1000000,
-    feePayerAddress
-  );
+  const pingPong = await PingPong.deploy(gatewayContract);
   await pingPong.deployed();
 
   console.log(deployContract + " Contract deployed to: ", pingPong.address);
