@@ -4,7 +4,6 @@ import "@typechain/hardhat";
 import "@openzeppelin/hardhat-upgrades";
 import "solidity-coverage";
 import { resolve } from "path";
-
 import { config as dotenvConfig } from "dotenv";
 import { NetworkUserConfig } from "hardhat/types";
 import "@nomiclabs/hardhat-etherscan";
@@ -105,13 +104,15 @@ function getChainConfig(network: keyof typeof chainIds): NetworkUserConfig {
     // console.log(url, process.env.PRIVATE_KEY)
   } else if (network == "fuji") {
     //1
-    url = "https://api.avax-test.network/ext/bc/C/rpc";
+    url = "https://rpc.ankr.com/avalanche_fuji";
     // console.log(url, process.env.PRIVATE_KEY)
   } else if (network == "goerli") {
     //1
     // url = "https://goerli.infura.io/v3/d19691ef05dc486a820545f387b66efc";
     url = "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161";
     // console.log(url, process.env.PRIVATE_KEY)
+  } else if (network == "bscTestnet") {
+    url = "https://bsc-testnet.public.blastapi.io";
   }
   return {
     // accounts: {
@@ -123,8 +124,9 @@ function getChainConfig(network: keyof typeof chainIds): NetworkUserConfig {
     accounts: [`${process.env.PRIVATE_KEY}`],
     chainId: chainIds[network],
     url,
-    // gasPrice: network == "bsc" ? 20000000000 : 200000000000,
-    // gasPrice: 450_000_000_000
+    // gas: 10000000,
+    // // gasPrice: network == "bsc" ? 20000000000 : 200000000000,
+    // gasPrice: 4500000000,
   };
 }
 
@@ -207,16 +209,6 @@ const config = {
       chainId: chainIds["rinkeby"],
       url: "https://rinkeby.infura.io/v3/" + infuraApiKey + "",
     },
-    bscTestnet: {
-      saveDeployments: true,
-      accounts: {
-        initialIndex: 0,
-        mnemonic,
-        // path: "m/44'/60'/0'/0",
-      },
-      chainId: chainIds["bscTestnet"],
-      url: "https://data-seed-prebsc-1-s1.binance.org:8545",
-    },
     polygonMumbai: {
       saveDeployments: true,
       accounts: {
@@ -246,6 +238,7 @@ const config = {
     fuji: getChainConfig("fuji"),
     goerli: getChainConfig("goerli"),
     mumbai: getChainConfig("mumbai"),
+    bsctestnet: getChainConfig("bscTestnet"),
   },
   paths: {
     artifacts: "./artifacts",
@@ -269,7 +262,7 @@ const config = {
       // https://hardhat.org/hardhat-network/#solidity-optimizer-support
       optimizer: {
         enabled: true,
-        runs: 50,
+        runs: 50000,
       },
     },
   },
@@ -288,7 +281,6 @@ const config = {
       polygon: process.env.POLYGONSCAN_API_KEY,
       bsc: process.env.BSC_ETHERSCAN_KEY,
       avalanche: "QAE2JD7XIBCYB6Z6GSKNJIHKZ8XGVYM8AI",
-
       opera: process.env.FTMSCAN_KEY,
       arbitrumOne: process.env.ARBITRUM_KEY,
       optimisticEthereum: process.env.OPTIMISM_KEY,
@@ -297,8 +289,10 @@ const config = {
       harmony: process.env.HARMONY_KEY,
       moonbeam: process.env.MOONBEAM_ETHERSCAN_KEY,
       kava: process.env.MOONBEAM_ETHERSCAN_KEY,
-      goerli: process.env.MAINNET_ETHERSCAN_KEY,
+      goerli: process.env.ETHERSCAN_API_KEY,
       avalancheFujiTestnet: "QAE2JD7XIBCYB6Z6GSKNJIHKZ8XGVYM8AI",
+      bscTestnet: process.env.BSCSCAN_API_KEY,
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY,
     },
 
     customChains: [

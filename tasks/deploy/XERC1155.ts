@@ -12,7 +12,6 @@ task("TASK_DEPLOY_XERC1155").setAction(async function (
 
   const gatewayContract = deployments[chainId].gatewayContract;
   const feePayerAddress = deployments[chainId].feePayerAddress;
-
   const deployContract = "XERC1155";
 
   console.log("Contract Deployment Started ");
