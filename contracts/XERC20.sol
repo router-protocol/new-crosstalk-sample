@@ -25,11 +25,9 @@ contract XERC20 is ERC20, IDapp {
   mapping(string => bytes) public ourContractOnChains;
 
   constructor(
-    string memory _name,
-    string memory _symbol,
     address payable gatewayAddress,
     string memory feePayerAddress
-  ) ERC20(_name, _symbol) {
+  ) ERC20("My Token", "MTK") {
     gatewayContract = IGateway(gatewayAddress);
     owner = msg.sender;
 
