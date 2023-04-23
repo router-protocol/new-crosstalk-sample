@@ -21,17 +21,14 @@ contract XERC20 is ERC20, IDapp {
   // gas limit required to handle cross-chain request on the destination chain
   uint64 public _destGasLimit;
 
-  bytes public _requestSender;
-  string public _srcChainId;
-  uint256 public _requestIdentifier;
-
   // chain id => address of our contract in bytes
   mapping(string => bytes) public ourContractOnChains;
 
   constructor(
     string memory _name,
     string memory _symbol,
-    address payable gatewayAddress
+    address payable gatewayAddress,
+    string memory feePayerAddress
   ) ERC20(_name, _symbol) {
     gatewayContract = IGateway(gatewayAddress);
     owner = msg.sender;
@@ -39,7 +36,7 @@ contract XERC20 is ERC20, IDapp {
     //minting 20 tokens to deployer initially for testing
     _mint(msg.sender, 20);
 
-    // gatewayContract.setDappMetadata(feePayerAddress);
+    gatewayContract.setDappMetadata(feePayerAddress);
   }
 
   /// @notice function to set the fee payer address on Router Chain.
@@ -74,19 +71,15 @@ contract XERC20 is ERC20, IDapp {
   }
 
   /// @notice function to generate a cross-chain token transfer request.
-  /// @param routeAmount Amount of route tokens to be sent
-  /// @param routeRecipient Recipient of Route on destination chain
   /// @param destChainId chain ID of the destination chain in string.
   /// @param recipient address of the recipient of tokens on destination chain
   /// @param amount amount of tokens to be transferred cross-chain
   /// @param requestMetadata abi-encoded metadata according to source and destination chains
   function transferCrossChain(
-    uint256 routeAmount,
-    bytes memory routeRecipient,
-    string memory destChainId,
-    bytes memory recipient,
     uint256 amount,
-    bytes memory requestMetadata
+    string calldata destChainId,
+    bytes calldata recipient,
+    bytes calldata requestMetadata
   ) public payable {
     require(
       keccak256(ourContractOnChains[destChainId]) !=
@@ -111,8 +104,8 @@ contract XERC20 is ERC20, IDapp {
 
     gatewayContract.iSend{ value: msg.value }(
       1,
-      routeAmount,
-      routeRecipient,
+      0,
+      string(""),
       destChainId,
       requestMetadata,
       requestPacket
@@ -149,17 +142,20 @@ contract XERC20 is ERC20, IDapp {
   /// @param packet the payload sent by the source chain contract when the request was created.
   /// @param srcChainId chain ID of the source chain in string.
   function iReceive(
-    bytes memory requestSender,
+    string memory requestSender,
     bytes memory packet,
     string memory srcChainId
-  ) external returns (bytes memory) {
+  ) external override returns (bytes memory) {
     require(msg.sender == address(gatewayContract), "only gateway");
+    require(
+      keccak256(ourContractOnChains[srcChainId]) ==
+        keccak256(bytes(requestSender))
+    );
+
     (bytes memory recipient, uint256 amount) = abi.decode(
       packet,
       (bytes, uint256)
     );
-    _requestSender = requestSender;
-    _srcChainId = srcChainId;
     _mint(toAddress(recipient), amount);
 
     return abi.encode(srcChainId);
@@ -177,7 +173,7 @@ contract XERC20 is ERC20, IDapp {
     uint256 requestIdentifier,
     bool execFlag,
     bytes memory execData
-  ) external {}
+  ) external override {}
 
   /// @notice function to convert type address into type bytes.
   /// @param a address to be converted

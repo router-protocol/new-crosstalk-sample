@@ -41,7 +41,7 @@ const chainIds = {
 };
 
 // Ensure that we have all the environment variables we need.
-const mnemonic = process.env.MNEMONIC;
+const mnemonic = process.env.PRIVATE_KEY;
 
 if (!mnemonic) {
   throw new Error("Please set your MNEMONIC in a .env file");

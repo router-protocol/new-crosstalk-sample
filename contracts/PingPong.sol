@@ -30,10 +30,6 @@ contract PingPong is IDapp {
   // chain back from the destination chain.
   uint64 public _ackGasLimit;
 
-  bytes public _requestSender;
-  string public _srcChainId;
-  uint256 public _requestIdentifier;
-
   // custom error so that we can emit a custom error message
   error CustomError(string message);
 
@@ -49,12 +45,12 @@ contract PingPong is IDapp {
   event ExecutionStatus(uint256 indexed eventIdentifier, bool isSuccess);
   event AckFromDestination(uint64 indexed requestId, string ackMessage);
 
-  constructor(address payable gatewayAddress) {
+  constructor(address payable gatewayAddress, string memory feePayerAddress) {
     owner = msg.sender;
 
     gatewayContract = IGateway(gatewayAddress);
 
-    // gatewayContract.setDappMetadata(feePayerAddress);
+    gatewayContract.setDappMetadata(feePayerAddress);
   }
 
   /// @notice function to set the fee payer address on Router Chain.
@@ -72,19 +68,15 @@ contract PingPong is IDapp {
   }
 
   /// @notice function to generate a cross-chain request to ping a destination chain contract.
-  /// @param routeAmount Amount of route tokens to be sent
-  /// @param routeRecipient Recipient of Route on destination chain
   /// @param destChainId chain ID of the destination chain in string.
   /// @param destinationContractAddress contract address of the contract that will handle this
   /// @param str string to be pinged to destination
   /// @param requestMetadata abi-encoded metadata according to source and destination chains
   function iPing(
-    uint256 routeAmount,
-    bytes memory routeRecipient,
-    string memory destChainId,
-    bytes memory destinationContractAddress,
-    string memory str,
-    bytes memory requestMetadata
+    string calldata destChainId,
+    string calldata destinationContractAddress,
+    string calldata str,
+    bytes calldata requestMetadata
   ) public payable {
     currentRequestId++;
 
@@ -92,8 +84,8 @@ contract PingPong is IDapp {
     bytes memory requestPacket = abi.encode(destinationContractAddress, packet);
     gatewayContract.iSend{ value: msg.value }(
       1,
-      routeAmount,
-      routeRecipient,
+      0,
+      string(""),
       destChainId,
       requestMetadata,
       requestPacket
@@ -131,17 +123,15 @@ contract PingPong is IDapp {
   /// @param packet the payload sent by the source chain contract when the request was created.
   /// @param srcChainId chain ID of the source chain in string.
   function iReceive(
-    bytes memory requestSender,
+    string memory requestSender,
     bytes memory packet,
     string memory srcChainId
-  ) external returns (bytes memory) {
+  ) external override returns (bytes memory) {
     require(msg.sender == address(gatewayContract), "only gateway");
     (uint64 requestId, string memory sampleStr) = abi.decode(
       packet,
       (uint64, string)
     );
-    _requestSender = requestSender;
-    _srcChainId = srcChainId;
     pingFromSource[srcChainId][requestId] = sampleStr;
 
     emit PingFromSource(srcChainId, requestId, sampleStr);
@@ -161,8 +151,7 @@ contract PingPong is IDapp {
     uint256 requestIdentifier,
     bool execFlag,
     bytes memory execData
-  ) external {
-    _requestIdentifier = requestIdentifier;
+  ) external override {
     (uint64 requestId, string memory ackMessage) = abi.decode(
       execData,
       (uint64, string)

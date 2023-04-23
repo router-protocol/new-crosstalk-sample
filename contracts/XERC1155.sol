@@ -22,10 +22,6 @@ contract XERC1155 is ERC1155, IDapp {
   // chain type + chain id => address of our contract in bytes
   mapping(string => bytes) public ourContractOnChains;
 
-  bytes public _requestSender;
-  string public _srcChainId;
-  uint256 public _requestIdentifier;
-
   // transfer params struct where we specify which NFTs should be transferred to
   // the destination chain and to which address
   struct TransferParams {
@@ -37,7 +33,8 @@ contract XERC1155 is ERC1155, IDapp {
 
   constructor(
     string memory _uri,
-    address payable gatewayAddress
+    address payable gatewayAddress,
+    string memory feePayerAddress
   ) ERC1155(_uri) {
     gatewayContract = IGateway(gatewayAddress);
     owner = msg.sender;
@@ -45,7 +42,7 @@ contract XERC1155 is ERC1155, IDapp {
     // minting ourselves some NFTs so that we can test out the contracts
     _mint(msg.sender, 1, 10, "");
 
-    //gatewayContract.setDappMetadata(feePayerAddress);
+    gatewayContract.setDappMetadata(feePayerAddress);
   }
 
   /// @notice function to set the fee payer address on Router Chain.
@@ -85,14 +82,10 @@ contract XERC1155 is ERC1155, IDapp {
   }
 
   /// @notice function to generate a cross-chain NFT transfer request.
-  /// @param routeAmount Amount of route tokens to be sent
-  /// @param routeRecipient Recipient of Route on destination chain
   /// @param destChainId chain ID of the destination chain in string.
   /// @param transferParams transfer params struct.
   /// @param requestMetadata abi-encoded metadata according to source and destination chains
   function transferCrossChain(
-    uint256 routeAmount,
-    bytes memory routeRecipient,
     string memory destChainId,
     TransferParams memory transferParams,
     bytes memory requestMetadata
@@ -115,8 +108,8 @@ contract XERC1155 is ERC1155, IDapp {
 
     gatewayContract.iSend{ value: msg.value }(
       1,
-      routeAmount,
-      routeRecipient,
+      0,
+      string(""),
       destChainId,
       requestMetadata,
       requestPacket
@@ -153,15 +146,18 @@ contract XERC1155 is ERC1155, IDapp {
   /// @param packet the payload sent by the source chain contract when the request was created.
   /// @param srcChainId chain ID of the source chain in string.
   function iReceive(
-    bytes memory requestSender,
+    string memory requestSender,
     bytes memory packet,
     string memory srcChainId
-  ) external returns (bytes memory) {
+  ) external override returns (bytes memory) {
     require(msg.sender == address(gatewayContract), "only gateway");
+    require(
+      keccak256(ourContractOnChains[srcChainId]) ==
+        keccak256(bytes(requestSender))
+    );
+
     // decoding our payload
     TransferParams memory transferParams = abi.decode(packet, (TransferParams));
-    _requestSender = requestSender;
-    _srcChainId = srcChainId;
     _mintBatch(
       toAddress(transferParams.recipient),
       transferParams.nftIds,
@@ -184,7 +180,7 @@ contract XERC1155 is ERC1155, IDapp {
     uint256 requestIdentifier,
     bool execFlag,
     bytes memory execData
-  ) external {}
+  ) external override {}
 
   /// @notice function to convert type address into type bytes.
   /// @param a address to be converted

@@ -33,7 +33,10 @@ contract XERC721 is ERC721, IDapp {
     bytes recipient;
   }
 
-  constructor(address payable gatewayAddress) ERC721("ERC721", "ERC721") {
+  constructor(
+    address payable gatewayAddress,
+    string memory feePayerAddress
+  ) ERC721("ERC721", "ERC721") {
     gatewayContract = IGateway(gatewayAddress);
     owner = msg.sender;
 
@@ -43,7 +46,7 @@ contract XERC721 is ERC721, IDapp {
     _mint(msg.sender, 2);
     _mint(msg.sender, 3);
 
-    //gatewayContract.setDappMetadata(feePayerAddress);
+    gatewayContract.setDappMetadata(feePayerAddress);
   }
 
   /// @notice function to set the fee payer address on Router Chain.
@@ -78,14 +81,10 @@ contract XERC721 is ERC721, IDapp {
   }
 
   /// @notice function to generate a cross-chain NFT transfer request.
-  /// @param routeAmount Amount of route tokens to be sent
-  /// @param routeRecipient Recipient of Route on destination chain
   /// @param destChainId chain ID of the destination chain in string.
   /// @param transferParams transfer params struct.
   /// @param requestMetadata abi-encoded metadata according to source and destination chains
   function transferCrossChain(
-    uint256 routeAmount,
-    bytes memory routeRecipient,
     string memory destChainId,
     TransferParams memory transferParams,
     bytes memory requestMetadata
@@ -113,8 +112,8 @@ contract XERC721 is ERC721, IDapp {
 
     gatewayContract.iSend{ value: msg.value }(
       1,
-      routeAmount,
-      routeRecipient,
+      0,
+      string(""),
       destChainId,
       requestMetadata,
       requestPacket
@@ -151,15 +150,18 @@ contract XERC721 is ERC721, IDapp {
   /// @param packet the payload sent by the source chain contract when the request was created.
   /// @param srcChainId chain ID of the source chain in string.
   function iReceive(
-    bytes memory requestSender,
+    string memory requestSender,
     bytes memory packet,
     string memory srcChainId
-  ) external returns (bytes memory) {
+  ) external override returns (bytes memory) {
     require(msg.sender == address(gatewayContract), "only gateway");
+    require(
+      keccak256(ourContractOnChains[srcChainId]) ==
+        keccak256(bytes(requestSender))
+    );
+
     // decoding our payload
     TransferParams memory transferParams = abi.decode(packet, (TransferParams));
-    _requestSender = requestSender;
-    _srcChainId = srcChainId;
     _mint(toAddress(transferParams.recipient), transferParams.nftId);
 
     return "";
@@ -177,7 +179,7 @@ contract XERC721 is ERC721, IDapp {
     uint256 requestIdentifier,
     bool execFlag,
     bytes memory execData
-  ) external {}
+  ) external override {}
 
   /// @notice function to convert type address into type bytes.
   /// @param a address to be converted
