@@ -7,9 +7,7 @@ import { resolve } from "path";
 import { config as dotenvConfig } from "dotenv";
 import { NetworkUserConfig } from "hardhat/types";
 import "@nomiclabs/hardhat-etherscan";
-import "./tasks/storeDeployments";
-import "./tasks/deploy/XERC1155";
-import "./tasks/deploy/PingPong";
+import "./tasks";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
@@ -42,7 +40,7 @@ const chainIds = {
 };
 
 // Ensure that we have all the environment variables we need.
-const mnemonic = process.env.MNEMONIC;
+const mnemonic = process.env.PRIVATE_KEY;
 
 if (!mnemonic) {
   throw new Error("Please set your MNEMONIC in a .env file");
@@ -60,7 +58,7 @@ function getChainConfig(network: keyof typeof chainIds): NetworkUserConfig {
     url =
       "https://polygon-mainnet.g.alchemy.com/v2/hCz4x1BLpLDP3NoomXivfaqND37qCSgS";
   } else if (network == "mumbai") {
-    url = "https://rpc.ankr.com/polygon_mumbai";
+    url = "https://matic-mumbai.chainstacklabs.com";
   } else if (network == "bsc") {
     url = "https://bsc-dataseed.binance.org/";
   } else if (network == "avalanche") {
@@ -219,7 +217,7 @@ const config = {
         // path: "m/44'/60'/0'/0",
       },
       chainId: chainIds["mumbai"],
-      url: "https://polygon-mumbai.g.alchemy.com/v2/BZ0E4emoGVd4i2_R6I_BcEbqAecpv7Gf",
+      url: "https://matic-mumbai.chainstacklabs.com",
     },
 
     kovan: getChainConfig("kovan"),
@@ -278,9 +276,10 @@ const config = {
   },
   etherscan: {
     apiKey: {
-      kovan: process.env.ETHERSCAN_API_KEY,
+      kovan: process.env.MAINNET_ETHERSCAN_KEY,
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY,
       polygon: process.env.POLYGONSCAN_API_KEY,
-      bsc: process.env.BSCSCAN_API_KEY,
+      bsc: process.env.BSC_ETHERSCAN_KEY,
       avalanche: "QAE2JD7XIBCYB6Z6GSKNJIHKZ8XGVYM8AI",
       opera: process.env.FTMSCAN_KEY,
       arbitrumOne: process.env.ARBITRUM_KEY,

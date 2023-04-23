@@ -3,13 +3,13 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "@routerprotocol/evm-gateway-contracts/contracts/IDapp.sol";
 import "@routerprotocol/evm-gateway-contracts/contracts/IGateway.sol";
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-/// @title XERC1155
+/// @title XERC721
 /// @author Yashika Goyal
-/// @notice A cross-chain ERC-1155 smart contract to demonstrate how one can create
+/// @notice A cross-chain ERC-721 smart contract to demonstrate how one can create
 /// cross-chain NFT contracts using Router CrossTalk.
-contract XERC1155 is ERC1155, IDapp {
+contract XERC721 is ERC721, IDapp {
   // address of the owner
   address public owner;
 
@@ -19,28 +19,32 @@ contract XERC1155 is ERC1155, IDapp {
   // gas limit required to handle cross-chain request on the destination chain
   uint64 public _destGasLimit;
 
+  bytes public _requestSender;
+  string public _srcChainId;
+  uint256 public _requestIdentifier;
+
   // chain type + chain id => address of our contract in bytes
   mapping(string => bytes) public ourContractOnChains;
 
-  // transfer params struct where we specify which NFTs should be transferred to
+  // transfer params struct where we specify which NFT should be transferred to
   // the destination chain and to which address
   struct TransferParams {
-    uint256[] nftIds;
-    uint256[] nftAmounts;
-    bytes nftData;
+    uint256 nftId;
     bytes recipient;
   }
 
   constructor(
-    string memory _uri,
     address payable gatewayAddress,
     string memory feePayerAddress
-  ) ERC1155(_uri) {
+  ) ERC721("ERC721", "ERC721") {
     gatewayContract = IGateway(gatewayAddress);
     owner = msg.sender;
 
-    // minting ourselves some NFTs so that we can test out the contracts
-    _mint(msg.sender, 1, 10, "");
+    // mint only on one chain.
+    // minting ourselves some NFTs so that we can test out the contracts.
+    _mint(msg.sender, 1);
+    _mint(msg.sender, 2);
+    _mint(msg.sender, 3);
 
     gatewayContract.setDappMetadata(feePayerAddress);
   }
@@ -59,20 +63,15 @@ contract XERC1155 is ERC1155, IDapp {
     gatewayContract = IGateway(gateway);
   }
 
-  function mint(
-    address account,
-    uint256[] memory nftIds,
-    uint256[] memory amounts,
-    bytes memory nftData
-  ) external {
+  function mint(address account, uint256 nftId) external {
     require(msg.sender == owner, "only owner");
-    _mintBatch(account, nftIds, amounts, nftData);
+    _mint(account, nftId);
   }
 
-  /// @notice function to set the address of our NFT contracts on different chains.
+  /// @notice function to set the address of our ERC20 contracts on different chains.
   /// This will help in access control when a cross-chain request is received.
   /// @param chainId chain Id of the destination chain in string.
-  /// @param contractAddress address of the NFT contract on the destination chain.
+  /// @param contractAddress address of the ERC20 contract on the destination chain.
   function setContractOnChain(
     string memory chainId,
     address contractAddress
@@ -96,8 +95,13 @@ contract XERC1155 is ERC1155, IDapp {
       "contract on dest not set"
     );
 
-    // burning the NFTs from the address of the user calling _burnBatch function
-    _burnBatch(msg.sender, transferParams.nftIds, transferParams.nftAmounts);
+    require(
+      _ownerOf(transferParams.nftId) == msg.sender,
+      "caller is not the owner"
+    );
+
+    // burning the NFT from the address of the user calling _burn function
+    _burn(transferParams.nftId);
 
     // sending the transfer params struct to the destination chain as payload.
     bytes memory packet = abi.encode(transferParams);
@@ -158,12 +162,7 @@ contract XERC1155 is ERC1155, IDapp {
 
     // decoding our payload
     TransferParams memory transferParams = abi.decode(packet, (TransferParams));
-    _mintBatch(
-      toAddress(transferParams.recipient),
-      transferParams.nftIds,
-      transferParams.nftAmounts,
-      transferParams.nftData
-    );
+    _mint(toAddress(transferParams.recipient), transferParams.nftId);
 
     return "";
   }

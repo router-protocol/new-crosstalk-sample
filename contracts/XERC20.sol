@@ -1,15 +1,17 @@
-// SPDX-License-Identifier: Unlicensed
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0 <0.9.0;
 
 import "@routerprotocol/evm-gateway-contracts/contracts/IDapp.sol";
 import "@routerprotocol/evm-gateway-contracts/contracts/IGateway.sol";
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@routerprotocol/evm-gateway-contracts/contracts/Utils.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-/// @title XERC1155
+/// @title XERC20
 /// @author Yashika Goyal
-/// @notice A cross-chain ERC-1155 smart contract to demonstrate how one can create
-/// cross-chain NFT contracts using Router CrossTalk.
-contract XERC1155 is ERC1155, IDapp {
+/// @notice This is a cross-chain ERC-20 smart contract to demonstrate how one can
+/// utilise Router CrossTalk for making cross-chain tokens
+contract XERC20 is ERC20, IDapp {
   // address of the owner
   address public owner;
 
@@ -19,28 +21,20 @@ contract XERC1155 is ERC1155, IDapp {
   // gas limit required to handle cross-chain request on the destination chain
   uint64 public _destGasLimit;
 
-  // chain type + chain id => address of our contract in bytes
+  // chain id => address of our contract in bytes
   mapping(string => bytes) public ourContractOnChains;
 
-  // transfer params struct where we specify which NFTs should be transferred to
-  // the destination chain and to which address
-  struct TransferParams {
-    uint256[] nftIds;
-    uint256[] nftAmounts;
-    bytes nftData;
-    bytes recipient;
-  }
-
   constructor(
-    string memory _uri,
+    string memory _name,
+    string memory _symbol,
     address payable gatewayAddress,
     string memory feePayerAddress
-  ) ERC1155(_uri) {
+  ) ERC20(_name, _symbol) {
     gatewayContract = IGateway(gatewayAddress);
     owner = msg.sender;
 
-    // minting ourselves some NFTs so that we can test out the contracts
-    _mint(msg.sender, 1, 10, "");
+    //minting 20 tokens to deployer initially for testing
+    _mint(msg.sender, 20);
 
     gatewayContract.setDappMetadata(feePayerAddress);
   }
@@ -59,20 +53,15 @@ contract XERC1155 is ERC1155, IDapp {
     gatewayContract = IGateway(gateway);
   }
 
-  function mint(
-    address account,
-    uint256[] memory nftIds,
-    uint256[] memory amounts,
-    bytes memory nftData
-  ) external {
+  function mint(address account, uint256 amount) external {
     require(msg.sender == owner, "only owner");
-    _mintBatch(account, nftIds, amounts, nftData);
+    _mint(account, amount);
   }
 
-  /// @notice function to set the address of our NFT contracts on different chains.
+  /// @notice function to set the address of our ERC20 contracts on different chains.
   /// This will help in access control when a cross-chain request is received.
   /// @param chainId chain Id of the destination chain in string.
-  /// @param contractAddress address of the NFT contract on the destination chain.
+  /// @param contractAddress address of the ERC20 contract on the destination chain.
   function setContractOnChain(
     string memory chainId,
     address contractAddress
@@ -81,14 +70,16 @@ contract XERC1155 is ERC1155, IDapp {
     ourContractOnChains[chainId] = toBytes(contractAddress);
   }
 
-  /// @notice function to generate a cross-chain NFT transfer request.
+  /// @notice function to generate a cross-chain token transfer request.
   /// @param destChainId chain ID of the destination chain in string.
-  /// @param transferParams transfer params struct.
+  /// @param recipient address of the recipient of tokens on destination chain
+  /// @param amount amount of tokens to be transferred cross-chain
   /// @param requestMetadata abi-encoded metadata according to source and destination chains
   function transferCrossChain(
-    string memory destChainId,
-    TransferParams memory transferParams,
-    bytes memory requestMetadata
+    uint256 amount,
+    string calldata destChainId,
+    bytes calldata recipient,
+    bytes calldata requestMetadata
   ) public payable {
     require(
       keccak256(ourContractOnChains[destChainId]) !=
@@ -96,11 +87,16 @@ contract XERC1155 is ERC1155, IDapp {
       "contract on dest not set"
     );
 
-    // burning the NFTs from the address of the user calling _burnBatch function
-    _burnBatch(msg.sender, transferParams.nftIds, transferParams.nftAmounts);
+    require(
+      balanceOf(msg.sender) >= amount,
+      "ERC20: Amount cannot be greater than the balance"
+    );
 
-    // sending the transfer params struct to the destination chain as payload.
-    bytes memory packet = abi.encode(transferParams);
+    // burning the tokens from the address of the user calling this function
+    _burn(msg.sender, amount);
+
+    // encoding the data that we need to use on destination chain to mint the tokens there.
+    bytes memory packet = abi.encode(recipient, amount);
     bytes memory requestPacket = abi.encode(
       ourContractOnChains[destChainId],
       packet
@@ -156,16 +152,13 @@ contract XERC1155 is ERC1155, IDapp {
         keccak256(bytes(requestSender))
     );
 
-    // decoding our payload
-    TransferParams memory transferParams = abi.decode(packet, (TransferParams));
-    _mintBatch(
-      toAddress(transferParams.recipient),
-      transferParams.nftIds,
-      transferParams.nftAmounts,
-      transferParams.nftData
+    (bytes memory recipient, uint256 amount) = abi.decode(
+      packet,
+      (bytes, uint256)
     );
+    _mint(toAddress(recipient), amount);
 
-    return "";
+    return abi.encode(srcChainId);
   }
 
   /// @notice function to handle the acknowledgement received from the destination chain

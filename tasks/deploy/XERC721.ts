@@ -1,7 +1,7 @@
 import { task, types } from "hardhat/config";
 import { TaskArguments } from "hardhat/types";
 
-task("TASK_DEPLOY_PINGPONG").setAction(async function (
+task("TASK_DEPLOY_XERC721").setAction(async function (
   _taskArguments: TaskArguments,
   hre
 ) {
@@ -12,20 +12,20 @@ task("TASK_DEPLOY_PINGPONG").setAction(async function (
 
   const gatewayContract = deployments[chainId].gatewayContract;
   const feePayerAddress = deployments[chainId].feePayerAddress;
-  const deployContract = "PingPong";
+
+  const deployContract = "XERC721";
 
   console.log("Contract Deployment Started ");
-  const PingPong = await hre.ethers.getContractFactory("PingPong");
-  const pingPong = await PingPong.deploy(gatewayContract, feePayerAddress);
+  const Erc721 = await hre.ethers.getContractFactory("XERC721");
+  const erc721 = await Erc721.deploy(gatewayContract, feePayerAddress);
+  await erc721.deployed();
 
-  await pingPong.deployed();
-
-  console.log(deployContract + " Contract deployed to: ", pingPong.address);
+  console.log(deployContract + " Contract deployed to: ", erc721.address);
   console.log("Contract Deployment Ended");
 
   await hre.run("TASK_STORE_DEPLOYMENTS", {
     contractName: deployContract,
-    contractAddress: pingPong.address,
+    contractAddress: erc721.address,
     chainID: chainId.toString(),
   });
   return null;
