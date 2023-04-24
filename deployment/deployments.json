@@ -1,12 +1,1 @@
-{
-  "43113": {
-    "gatewayContract": "0xE37f4c68f7E01626529548688bf80FcA5f453F11",
-    "PingPong": "0xCD9A8FFdE96bb2bec192c0b63d6aCAC2518B5048",
-    "feePayerAddress": "router1z6ralzg5tsznq9s6xmutyeen7evylcj7harhmq"
-  },
-  "80001": {
-    "gatewayContract": "0x79AEaBB01C30833612A7A266a43aa68B0748C66B",
-    "PingPong": "0xb2d7ff35268789c18514eeb8d48c0Bf5D7201a8A",
-    "feePayerAddress": "router1z6ralzg5tsznq9s6xmutyeen7evylcj7harhmq"
-  }
-}
+{"43113":{"gatewayContract":"0x3d9640d8489457e0e553BB89ec16Ffdf36f69Ef7","PingPong":"0xAfBdc279d001498941500C666AFadA2A982BAc3E","feePayerAddress":"router1z6ralzg5tsznq9s6xmutyeen7evylcj7harhmq"},"80001":{"gatewayContract":"0xa5d3D08BCb456a4E16e475c619621de25822c3d8","PingPong":"0xDC2bCa3a686FAf95C44253834E42A3D8090254eb","feePayerAddress":"router1z6ralzg5tsznq9s6xmutyeen7evylcj7harhmq"}}
