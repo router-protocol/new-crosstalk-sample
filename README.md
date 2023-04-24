@@ -21,7 +21,7 @@ Here, we will deploy a cross-chain ping pong smart contract built using the Rout
    For example:
    1. If you want to deploy your contract on Polygon mumbai, you just have to run:
    ```shell
-   npx hardhat TASK_DEPLOY_PINGPONG --network <network_name>
+   npx hardhat TASK_DEPLOY_PINGPONG --network mumbai
    ```
    2. If you want to deploy your contract on Avalanche Fuji, you just have to run:
    ```shell
