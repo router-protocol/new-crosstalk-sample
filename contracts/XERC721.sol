@@ -19,12 +19,8 @@ contract XERC721 is ERC721, IDapp {
   // gas limit required to handle cross-chain request on the destination chain
   uint64 public _destGasLimit;
 
-  bytes public _requestSender;
-  string public _srcChainId;
-  uint256 public _requestIdentifier;
-
   // chain type + chain id => address of our contract in bytes
-  mapping(string => bytes) public ourContractOnChains;
+  mapping(string => string) public ourContractOnChains;
 
   // transfer params struct where we specify which NFT should be transferred to
   // the destination chain and to which address
@@ -73,11 +69,11 @@ contract XERC721 is ERC721, IDapp {
   /// @param chainId chain Id of the destination chain in string.
   /// @param contractAddress address of the ERC20 contract on the destination chain.
   function setContractOnChain(
-    string memory chainId,
-    address contractAddress
+    string calldata chainId,
+    string calldata contractAddress
   ) external {
     require(msg.sender == owner, "only owner");
-    ourContractOnChains[chainId] = toBytes(contractAddress);
+    ourContractOnChains[chainId] = contractAddress;
   }
 
   /// @notice function to generate a cross-chain NFT transfer request.
@@ -85,13 +81,13 @@ contract XERC721 is ERC721, IDapp {
   /// @param transferParams transfer params struct.
   /// @param requestMetadata abi-encoded metadata according to source and destination chains
   function transferCrossChain(
-    string memory destChainId,
-    TransferParams memory transferParams,
-    bytes memory requestMetadata
+    string calldata destChainId,
+    TransferParams calldata transferParams,
+    bytes calldata requestMetadata
   ) public payable {
     require(
-      keccak256(ourContractOnChains[destChainId]) !=
-        keccak256(toBytes(address(0))),
+      keccak256(abi.encodePacked(ourContractOnChains[destChainId])) !=
+        keccak256(abi.encodePacked("")),
       "contract on dest not set"
     );
 
@@ -146,25 +142,19 @@ contract XERC721 is ERC721, IDapp {
   }
 
   /// @notice function to handle the cross-chain request received from some other chain.
-  /// @param requestSender address of the contract on source chain that initiated the request.
   /// @param packet the payload sent by the source chain contract when the request was created.
   /// @param srcChainId chain ID of the source chain in string.
   function iReceive(
-    string memory requestSender,
+    string memory, //requestSender,
     bytes memory packet,
     string memory srcChainId
   ) external override returns (bytes memory) {
     require(msg.sender == address(gatewayContract), "only gateway");
-    require(
-      keccak256(ourContractOnChains[srcChainId]) ==
-        keccak256(bytes(requestSender))
-    );
-
     // decoding our payload
     TransferParams memory transferParams = abi.decode(packet, (TransferParams));
     _mint(toAddress(transferParams.recipient), transferParams.nftId);
 
-    return "";
+    return abi.encode(srcChainId);
   }
 
   /// @notice function to handle the acknowledgement received from the destination chain

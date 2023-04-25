@@ -17,7 +17,12 @@ task("TASK_DEPLOY_XERC20").setAction(async function (
 
   console.log("Contract Deployment Started ");
   const Erc20 = await hre.ethers.getContractFactory("XERC20");
-  const erc20 = await Erc20.deploy(gatewayContract, feePayerAddress);
+  const erc20 = await Erc20.deploy(
+    "XERC20",
+    "XERC20",
+    gatewayContract,
+    feePayerAddress
+  );
   await erc20.deployed();
 
   console.log(deployContract + " Contract deployed to: ", erc20.address);
