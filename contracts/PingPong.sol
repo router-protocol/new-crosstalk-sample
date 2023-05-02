@@ -23,13 +23,6 @@ contract PingPong is IDapp {
   // instance of the Router's gateway contract
   IGateway public gatewayContract;
 
-  // gas limit required to handle the cross-chain request on the destination chain.
-  uint64 public _destGasLimit;
-
-  // gas limit required to handle the acknowledgement received on the source
-  // chain back from the destination chain.
-  uint64 public _ackGasLimit;
-
   // custom error so that we can emit a custom error message
   error CustomError(string message);
 
@@ -119,11 +112,10 @@ contract PingPong is IDapp {
   }
 
   /// @notice function to handle the cross-chain request received from some other chain.
-  /// @param requestSender address of the contract on source chain that initiated the request.
   /// @param packet the payload sent by the source chain contract when the request was created.
   /// @param srcChainId chain ID of the source chain in string.
   function iReceive(
-    string memory requestSender,
+    string memory, //requestSender,
     bytes memory packet,
     string memory srcChainId
   ) external override returns (bytes memory) {
@@ -132,6 +124,11 @@ contract PingPong is IDapp {
       packet,
       (uint64, string)
     );
+    if (
+      keccak256(abi.encodePacked(sampleStr)) == keccak256(abi.encodePacked(""))
+    ) {
+      revert CustomError("String should not be empty");
+    }
     pingFromSource[srcChainId][requestId] = sampleStr;
 
     emit PingFromSource(srcChainId, requestId, sampleStr);
