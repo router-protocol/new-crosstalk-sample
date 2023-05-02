@@ -1,0 +1,54 @@
+[package]
+name = "new-crosstalk-sample"
+version = "0.1.0"
+edition = "2021"
+authors = ["Gaurav Agarwal <gaurav@routerprotocol.com>"]
+description = "The Cross Chain Samples package"
+repository = "https://github.com/router-protocol/new-crosstalk-sample.git"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+exclude = [
+  # Those files are rust-optimizer artifacts. You might want to commit them for convenience but they should not be part of the source code publication.
+  "contract.wasm",
+  "hash.txt",
+]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[profile.release]
+opt-level = 3
+debug = false
+rpath = false
+lto = true
+debug-assertions = false
+codegen-units = 1
+panic = 'abort'
+incremental = false
+overflow-checks = true
+
+[features]
+backtraces = ["cosmwasm-std/backtraces"]
+# use library feature to disable all instanti`ate/execute/query exports
+library = []
+
+[dependencies]
+cosmwasm-std = "1.0.0"
+cw-storage-plus = { version = "0.13.4" }
+schemars = "0.8.8"
+serde = { version = "1.0.137", default-features = false, features = ["derive"] }
+thiserror = { version = "1.0.31" }
+cw20 = { version = "0.13.4" }
+cw20-base = { version = "0.13.4", features = ["library"] }
+cw0 = { version = "0.10.3" }
+cw2 = { version = "0.13.2" }
+cosmwasm-crypto = "1.0.0"
+getrandom = { version = "0.2", features = ["js"] }
+hex = "0.4"
+arrayref = "0.3.6"
+codec = { package = "parity-scale-codec", version = "2.0.0", features = ["derive"] }
+cosmwasm-schema = { version = "0.16.0" }
+router-wasm-bindings = { version = "0.2.4", default-features = false, features = ["ethabi"] }
+
+[dev-dependencies]
