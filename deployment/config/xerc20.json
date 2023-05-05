@@ -1,0 +1,12 @@
+{
+    "testnet": {
+        "xerc20": {
+            "addr": "router1ukafgk6555pfxcqn3h3675dxd7jmfu7pxxnkwn5gmhqa7qk9a8msv2aas5",
+            "code_id": "52"
+        },
+        "cw20_token": {
+            "addr": "",
+            "code_id": "51"
+        }
+    }
+}

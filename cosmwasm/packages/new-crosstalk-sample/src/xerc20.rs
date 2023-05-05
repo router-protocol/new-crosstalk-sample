@@ -1,78 +1,60 @@
-// use crate::{Deserialize, Serialize};
-// use schemars::JsonSchema;
+use crate::{Deserialize, Serialize};
+use cosmwasm_std::{Binary, Uint128};
+use schemars::JsonSchema;
 
-// use cosmwasm_std::Uint128;
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct ContractInfo {
+    pub chain_id: String,
+    pub contract_addr: String,
+}
 
-// #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-// pub struct TicketMetadata {
-//     pub participant: String,
-//     pub rider_id: Uint128,
-//     pub score: Uint128,
-//     pub lower_bound: u128,
-//     pub upper_bound: u128,
-// }
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct ChainTypeInfo {
+    pub chain_id: String,
+    pub chain_type: u64,
+}
 
-// // Define struct LotteryMetadata
-// #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-// pub struct LotteryMetadata {
-//     pub start_time: u64,
-//     pub end_time: u64,
-//     pub claimed: bool,
-//     pub lucky_number: u128,
-//     pub winner: String,
-//     pub reward: Uint128,
-//     pub ticket_ranger: u128,
-// }
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct InstantiateMsg {
+    pub cw20_code_id: u64,
+    pub token_name: String,
+    pub token_symbol: String,
+}
 
-// // Define storage key prefix
-// const LOTTERY_METADATA_PREFIX: &[u8] = b"lottery_metadata";
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum ExecuteMsg {
+    SetWhiteListedContracts {
+        contracts: Vec<ContractInfo>,
+    },
+    SetChainId {
+        id: String,
+    },
+    SetXerc20Addr {
+        addr: String,
+    },
+    SetChainTypes {
+        chain_type_info: Vec<ChainTypeInfo>,
+    },
+    TrasferCrossChain {
+        amount: Uint128,
+        recipient: Binary,
+        dest_chain_id: String,
+    },
+}
 
-// // Define message for adding multiple lotteries
-// #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-// #[serde(rename_all = "snake_case")]
-// pub struct AddMLotteryMsg {
-//     pub rewards: Vec<Uint128>,
-// }
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct MigrateMsg {}
 
-// // Define state for last lottery time and lottery unique limit
-
-// #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-// pub struct InstantiateMsg {
-//     pub owner: String,
-//     pub _pd: u64,
-//     pub _ld: u64,
-// }
-
-// #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-// #[serde(rename_all = "snake_case")]
-// pub enum ExecuteMsg {
-//     AddLotteries {
-//         count: u64,
-//         rewards: Vec<Uint128>,
-//     },
-//     DrawLuckyNumber {},
-//     ClaimLottery {
-//         lottery_id: u64,
-//         rider_id: Uint128,
-//     },
-//     SubmitTicket {
-//         rider_id: Uint128,
-//         lottery_id: u64,
-//         score: Uint128,
-//         sender: String,
-//     },
-//     EnrollRemoteContract {
-//         chain_id: String,
-//         remote_address: String,
-//     },
-// }
-
-// #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-// pub struct MigrateMsg {}
-
-// #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-// #[serde(rename_all = "snake_case")]
-// pub enum QueryMsg {
-//     // fetch contract version
-//     GetContractVersion {},
-// }
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum QueryMsg {
+    // fetch contract version
+    GetContractVersion {},
+    FetchOwner {},
+    FetchXerc20 {},
+    FetchChainId {},
+    FetchChainType { chain_id: String },
+    FetchWhiteListedContract { chain_id: String },
+    AllWhiteListedContract {},
+}

@@ -3,6 +3,64 @@
 version = 3
 
 [[package]]
+name = "XERC1155"
+version = "0.1.0"
+dependencies = [
+ "arrayref",
+ "cosmwasm-crypto",
+ "cosmwasm-schema 1.2.4",
+ "cosmwasm-std",
+ "cosmwasm-storage",
+ "cw-multi-test",
+ "cw-storage-plus 0.13.4",
+ "cw-utils 1.0.1",
+ "cw0",
+ "cw2 0.13.4",
+ "cw20",
+ "cw20-base",
+ "cw721 0.17.0",
+ "cw721-base",
+ "getrandom",
+ "hex",
+ "new-crosstalk-sample",
+ "parity-scale-codec",
+ "router-wasm-bindings",
+ "schemars",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "XERC721"
+version = "0.1.0"
+dependencies = [
+ "arrayref",
+ "cosmwasm-crypto",
+ "cosmwasm-schema 1.2.4",
+ "cosmwasm-std",
+ "cosmwasm-storage",
+ "cw-multi-test",
+ "cw-storage-plus 0.13.4",
+ "cw-utils 1.0.1",
+ "cw0",
+ "cw2 0.13.4",
+ "cw20",
+ "cw20-base",
+ "cw721 0.17.0",
+ "cw721-base",
+ "getrandom",
+ "hex",
+ "new-crosstalk-sample",
+ "parity-scale-codec",
+ "router-wasm-bindings",
+ "schemars",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "ahash"
 version = "0.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -436,6 +494,34 @@ dependencies = [
 ]
 
 [[package]]
+name = "cw20-token"
+version = "0.1.0"
+dependencies = [
+ "arrayref",
+ "cosmwasm-crypto",
+ "cosmwasm-schema 1.2.4",
+ "cosmwasm-std",
+ "cosmwasm-storage",
+ "cw-multi-test",
+ "cw-storage-plus 0.13.4",
+ "cw-utils 1.0.1",
+ "cw0",
+ "cw2 0.13.4",
+ "cw20",
+ "cw20-base",
+ "getrandom",
+ "hex",
+ "integer-sqrt",
+ "new-crosstalk-sample",
+ "protobuf",
+ "router-wasm-bindings",
+ "schemars",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "cw721"
 version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -725,6 +811,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "integer-sqrt"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "276ec31bcb4a9ee45f58bec6f9ec700ae4cf4f4f8f2fa7e06cb406bd5ffdd770"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
 name = "itertools"
 version = "0.10.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -810,6 +905,15 @@ dependencies = [
  "schemars",
  "serde",
  "thiserror",
+]
+
+[[package]]
+name = "num-traits"
+version = "0.2.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "578ede34cf02f8924ab9447f50c28075b4d3e5b269972345e7e0372b38c6cdcd"
+dependencies = [
+ "autocfg",
 ]
 
 [[package]]
@@ -939,6 +1043,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
+]
+
+[[package]]
+name = "protobuf"
+version = "2.28.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "106dd99e98437432fed6519dedecfade6a06a73bb7b2a1e019fdd2bee5778d94"
+dependencies = [
+ "bytes",
 ]
 
 [[package]]
@@ -1374,6 +1487,32 @@ name = "wyz"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "85e60b0d1b5f99db2556934e21937020776a5d31520bf169e851ac44e6420214"
+
+[[package]]
+name = "xerc20"
+version = "0.1.0"
+dependencies = [
+ "arrayref",
+ "cosmwasm-crypto",
+ "cosmwasm-schema 1.2.4",
+ "cosmwasm-std",
+ "cosmwasm-storage",
+ "cw-multi-test",
+ "cw-storage-plus 0.13.4",
+ "cw-utils 1.0.1",
+ "cw0",
+ "cw2 0.13.4",
+ "cw20",
+ "cw20-base",
+ "getrandom",
+ "hex",
+ "new-crosstalk-sample",
+ "router-wasm-bindings",
+ "schemars",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
 
 [[package]]
 name = "zeroize"

@@ -1,5 +1,5 @@
 [workspace]
-members = ["packages/*", "contracts/ping-pong", "contracts/test-dapp"]
+members = ["packages/*", "contracts/*"]
 resolver = "2"
 
 [profile.release]

@@ -1,9 +1,9 @@
 [package]
-name = "xerc20"
+name = "cw20-token"
 version = "0.1.0"
 edition = "2021"
 authors = ["Gaurav Agarwal <gaurav@routerprotocol.com>"]
-description = "The Cross Chain XERC20 example contract"
+description = "The CW20 token contract"
 repository = "https://github.com/router-protocol/new-crosstalk-sample.git"
 
 exclude = [
@@ -58,6 +58,8 @@ cosmwasm-crypto = "1.0.0"
 getrandom = { version = "0.2", features = ["js"] }
 hex = "0.4"
 arrayref = "0.3.6"
+integer-sqrt = "0.1.5"
+protobuf = { version = "2", features = ["with-bytes"] }
 router-wasm-bindings = { version = "0.2.3", default-features = false, features = ["ethabi"] }
 new-crosstalk-sample = { package = "new-crosstalk-sample", path = "../../packages/new-crosstalk-sample"}
 

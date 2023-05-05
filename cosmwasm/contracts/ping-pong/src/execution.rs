@@ -1,4 +1,4 @@
-use cosmwasm_std::{Binary, DepsMut, ReplyOn, Response, StdResult, SubMsg, Uint128};
+use cosmwasm_std::{Binary, DepsMut, ReplyOn, Response, StdResult, SubMsg, Uint128, Event};
 use router_wasm_bindings::{
     ethabi::{encode, ethereum_types::U256, Token},
     Bytes, RouterMsg, RouterQuery,
@@ -19,7 +19,7 @@ pub fn i_ping(
     let request_id: u64 = fetch_request_id(deps.as_ref())? + 1;
     let u256: U256 = U256::from(request_id);
     REQUEST_ID.save(deps.storage, &(request_id))?;
-    let payload: Vec<u8> = encode(&[Token::Uint(u256), Token::String(ping)]);
+    let payload: Vec<u8> = encode(&[Token::Uint(u256), Token::String(ping.clone())]);
     let info_str: String = format!("create_outbound_request-- payload: {:?}", payload.clone(),);
     deps.api.debug(&info_str);
     let route_amount: Uint128 = Uint128::zero();
@@ -48,7 +48,11 @@ pub fn i_ping(
         gas_limit: None,
         reply_on: ReplyOn::Success,
     };
+    let event: Event = Event::new("new_ping")
+        .add_attribute("ping", ping)
+        .add_attribute("request_id", request_id.to_string());
     let res = Response::new()
+        .add_event(event)
         .add_submessage(cross_chain_sub_msg.into())
         .add_attribute("dest_contract_address", dest_contract_address);
     Ok(res)
