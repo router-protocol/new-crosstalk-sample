@@ -3,14 +3,12 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "@routerprotocol/evm-gateway-contracts/contracts/IGateway.sol";
 import "@routerprotocol/evm-gateway-contracts/contracts/Utils.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /// @title PingPong
 /// @author Yashika Goyal
 /// @notice This is a cross-chain ping pong smart contract to demonstrate how one can
 /// utilise Router CrossTalk for cross-chain transactions.
 contract PingPong {
-  using SafeERC20 for IERC20;
   address public owner;
   uint64 public currentRequestId;
 
