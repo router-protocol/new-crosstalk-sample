@@ -1,71 +1,56 @@
 use crate::{Deserialize, Serialize};
+use cosmwasm_std::{CustomMsg, StdResult};
+use router_wasm_bindings::{
+    ethabi::{ethereum_types::U256, ParamType, Token},
+    types::RequestMetaData,
+};
 use schemars::JsonSchema;
-
-use cosmwasm_std::Uint128;
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct TicketMetadata {
-    pub participant: String,
-    pub rider_id: Uint128,
-    pub score: Uint128,
-    pub lower_bound: u128,
-    pub upper_bound: u128,
-}
-
-// Define struct LotteryMetadata
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct LotteryMetadata {
-    pub start_time: u64,
-    pub end_time: u64,
-    pub claimed: bool,
-    pub lucky_number: u128,
-    pub winner: String,
-    pub reward: Uint128,
-    pub ticket_ranger: u128,
-}
-
-// Define storage key prefix
-const LOTTERY_METADATA_PREFIX: &[u8] = b"lottery_metadata";
-
-// Define message for adding multiple lotteries
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
-pub struct AddMLotteryMsg {
-    pub rewards: Vec<Uint128>,
-}
-
-// Define state for last lottery time and lottery unique limit
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {
-    pub owner: String,
-    pub _pd: u64,
-    pub _ld: u64,
+    pub name: String,
+    pub symbol: String,
+    pub minter: String, // fee payer will be contract itself
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct TransferParams {
+    pub nft_id: u64,
+    pub recipient: String,
+}
+
+impl TransferParams {
+    pub fn get_evm_encoding(&self) -> StdResult<Token> {
+        let token_id = Token::Uint(U256::from(self.nft_id.clone()));
+        let recipient = Token::Bytes(self.clone().recipient.into_bytes());
+        Ok(Token::Tuple(vec![token_id, recipient]))
+    }
+    pub fn get_params_types() -> ParamType {
+        return ParamType::Tuple(vec![ParamType::Uint(256), ParamType::Bytes]);
+    }
+    pub fn from_token_tuple(tuple: Vec<Token>) -> StdResult<Self> {
+        let nft_id = tuple[0].clone().into_uint().unwrap().as_u64();
+        let recipient = tuple[1].clone().into_string().unwrap();
+        Ok(Self { nft_id, recipient })
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
-    AddLotteries {
-        count: u64,
-        rewards: Vec<Uint128>,
-    },
-    DrawLuckyNumber {},
-    ClaimLottery {
-        lottery_id: u64,
-        rider_id: Uint128,
-    },
-    SubmitTicket {
-        rider_id: Uint128,
-        lottery_id: u64,
-        score: Uint128,
-        sender: String,
-    },
     EnrollRemoteContract {
         chain_id: String,
         remote_address: String,
     },
+    TransferCrossChain {
+        dst_chain_id: String,
+        token_id: u64,
+        recipient: String,
+        request_metadata: RequestMetaData,
+    },
 }
+
+impl CustomMsg for ExecuteMsg {}
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct MigrateMsg {}
@@ -75,4 +60,8 @@ pub struct MigrateMsg {}
 pub enum QueryMsg {
     // fetch contract version
     GetContractVersion {},
+    GetOwner {},
+    GetRemoteContract { chain_id: String },
 }
+
+impl CustomMsg for QueryMsg {}

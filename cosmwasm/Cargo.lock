@@ -45,8 +45,6 @@ dependencies = [
  "cw-utils 1.0.1",
  "cw0",
  "cw2 0.13.4",
- "cw20",
- "cw20-base",
  "cw721 0.17.0",
  "cw721-base",
  "getrandom",
