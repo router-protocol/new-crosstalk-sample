@@ -1,17 +1,15 @@
 use crate::contract::{execute, instantiate, query};
 use crate::execution::{Cw721ExecuteMsg, Cw721QueryMsg};
-use cw721::NftInfoResponse;
+use cw721::{NftInfoResponse, OwnerOfResponse};
 use cw721_base::MintMsg;
-use new_crosstalk_sample::xerc721::TransferParams;
 use new_crosstalk_sample::xerc721::{ExecuteMsg, InstantiateMsg, QueryMsg};
 use router_wasm_bindings::types::RequestMetaData;
 use router_wasm_bindings::RouterMsg;
-use serde_json;
 
 use cosmwasm_std::testing::{
     mock_dependencies, mock_env, mock_info, MockApi, MockQuerier, MockStorage,
 };
-use cosmwasm_std::{CosmosMsg, Empty, Env, MessageInfo, Uint128};
+use cosmwasm_std::{CosmosMsg, Deps, Empty, Env, MessageInfo, Response, StdError, Uint128};
 
 use cosmwasm_std::from_binary;
 use cosmwasm_std::DepsMut;
@@ -55,6 +53,31 @@ fn set_remote_contract(
     let enroll_msg = cw721_base::ExecuteMsg::Extension { msg: extension_msg };
     let res = execute(deps, env.clone(), _info, enroll_msg.clone());
     assert!(res.is_ok());
+}
+
+fn get_nft_owner_of(deps: Deps, env: Env, token_id: String) -> Result<OwnerOfResponse, StdError> {
+    let query_msg = Cw721QueryMsg::OwnerOf {
+        token_id,
+        include_expired: Some(false),
+    };
+    let owner_of = query(deps, env, query_msg);
+    match owner_of {
+        Ok(brr) => from_binary(&brr),
+        Err(_) => Err(StdError::NotFound { kind: "nft".into() }),
+    }
+}
+
+fn get_nft_info(
+    deps: Deps,
+    env: Env,
+    token_id: String,
+) -> Result<NftInfoResponse<Empty>, StdError> {
+    let query_msg = Cw721QueryMsg::NftInfo { token_id };
+    let nft_info = query(deps, env, query_msg);
+    match nft_info {
+        Ok(brr) => from_binary(&brr),
+        Err(_) => Err(StdError::NotFound { kind: "nft".into() }),
+    }
 }
 
 #[test]
@@ -145,13 +168,47 @@ fn test_transfer_crosschain() {
         is_read_call: false,
         asm_address: "".into(),
     };
+    let response = get_nft_info(deps.as_ref(), env.clone(), "2".into());
+    assert!(response.is_ok());
+
+    let respone = get_nft_owner_of(deps.as_ref(), env.clone(), "2".into());
+    assert!(response.is_ok());
+    assert_eq!(respone.unwrap().owner, SENDER);
+
     let ext_cc_msg = ExecuteMsg::TransferCrossChain {
         dst_chain_id: "1".into(),
         token_id: 2,
-        recipient: SENDER.to_string(),
+        recipient: "0x1C609537a32630c054202e2B089B9Da268667C5D".to_string(),
         request_metadata,
     };
     let exec_msg = Cw721ExecuteMsg::Extension { msg: ext_cc_msg };
     let res = execute(deps.as_mut(), env.clone(), info.clone(), exec_msg.clone());
     assert!(res.is_ok());
+
+    if let Ok(result) = res {
+        let _ok = match result.messages[0].msg.clone() {
+            CosmosMsg::Custom(msg) => match msg {
+                RouterMsg::CrosschainCall {
+                    version: _,
+                    route_amount: _,
+                    route_recipient: _,
+                    request_packet,
+                    request_metadata: _,
+                    dest_chain_id: _,
+                } => {
+                    // in order to verify encoded payload
+                    // println!("{:?}", hex::encode(request_packet));
+
+                    //Binary(hex::decode(op).unwrap())
+                    Ok(Response::<RouterMsg>::new())
+                }
+            },
+            _ => Err(StdError::NotFound {
+                kind: "isend".into(),
+            }),
+        };
+    }
+    // nft should be burned with id 2
+    let response = get_nft_info(deps.as_ref(), env, "2".into());
+    assert!(response.is_err());
 }

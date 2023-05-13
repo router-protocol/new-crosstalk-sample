@@ -107,10 +107,9 @@ pub fn transfer_crosschain(
     let dst_contract_add: String = REMOTE_CONTRACT_MAPPING
         .load(deps.storage, dst_chain_id.clone())
         .unwrap();
-
     let transfer_params = TransferParams {
-        recipient,
         nft_id: token_id,
+        recipient,
     };
 
     let encoded_payload: Vec<u8> = encode(&[transfer_params.get_evm_encoding()?]);
