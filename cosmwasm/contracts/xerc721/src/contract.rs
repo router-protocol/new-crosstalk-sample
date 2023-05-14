@@ -18,7 +18,7 @@ use crate::{
 use new_crosstalk_sample::xerc721::{InstantiateMsg, MigrateMsg, QueryMsg};
 
 // version info for migration info
-const CONTRACT_NAME: &str = "lottery";
+const CONTRACT_NAME: &str = "xerc721";
 const CONTRACT_VERSION: &str = "1.0.0";
 
 #[cfg_attr(not(feature = "library"), entry_point)]
@@ -57,7 +57,7 @@ pub fn instantiate(
         _ => {}
     }
 
-    Ok(Response::new().add_attribute("action", "lottery-init"))
+    Ok(Response::new().add_attribute("action", "xcw721-init"))
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
