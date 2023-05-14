@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 /// @author Yashika Goyal
 /// @notice This is a cross-chain ping pong smart contract to demonstrate how one can
 /// utilise Router CrossTalk for cross-chain transactions.
-contract PingPong is IDapp {
+contract PingPong {
   using SafeERC20 for IERC20;
   address public owner;
   uint64 public currentRequestId;
@@ -118,7 +118,7 @@ contract PingPong is IDapp {
     string memory, //requestSender,
     bytes memory packet,
     string memory srcChainId
-  ) external override returns (bytes memory) {
+  ) external returns (uint64, string memory) {
     require(msg.sender == address(gatewayContract), "only gateway");
     (uint64 requestId, string memory sampleStr) = abi.decode(
       packet,
@@ -133,7 +133,7 @@ contract PingPong is IDapp {
 
     emit PingFromSource(srcChainId, requestId, sampleStr);
 
-    return abi.encode(requestId, sampleStr);
+    return (requestId, sampleStr);
   }
 
   /// @notice function to handle the acknowledgement received from the destination chain
@@ -148,7 +148,7 @@ contract PingPong is IDapp {
     uint256 requestIdentifier,
     bool execFlag,
     bytes memory execData
-  ) external override {
+  ) external {
     (uint64 requestId, string memory ackMessage) = abi.decode(
       execData,
       (uint64, string)

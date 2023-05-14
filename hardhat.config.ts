@@ -211,11 +211,7 @@ const config = {
     },
     polygonMumbai: {
       saveDeployments: true,
-      accounts: {
-        initialIndex: 0,
-        mnemonic,
-        // path: "m/44'/60'/0'/0",
-      },
+      accounts: [mnemonic],
       chainId: chainIds["mumbai"],
       url: "https://matic-mumbai.chainstacklabs.com",
     },
@@ -291,8 +287,7 @@ const config = {
       kava: process.env.MOONBEAM_ETHERSCAN_KEY,
       goerli: process.env.ETHERSCAN_API_KEY,
       avalancheFujiTestnet: "QAE2JD7XIBCYB6Z6GSKNJIHKZ8XGVYM8AI",
-      bscTestnet: process.env.BSCSCAN_API_KEY,
-      polygonMumbai: process.env.POLYGONSCAN_API_KEY,
+      bscTestnet: process.env.BSCSCAN_API_KEY
     },
 
     customChains: [
