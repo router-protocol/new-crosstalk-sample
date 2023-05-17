@@ -104,7 +104,7 @@ function getChainConfig(network: keyof typeof chainIds): NetworkUserConfig {
     // console.log(url, process.env.PRIVATE_KEY)
   } else if (network == "fuji") {
     //1
-    url = "https://rpc.ankr.com/avalanche_fuji";
+    url = "https://api.avax-test.network/ext/bc/C/rpc";
     // console.log(url, process.env.PRIVATE_KEY)
   } else if (network == "goerli") {
     //1

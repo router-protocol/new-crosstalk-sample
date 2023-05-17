@@ -34,7 +34,7 @@ contract XERC20 is ERC20, IDapp {
     owner = msg.sender;
 
     //minting 20 tokens to deployer initially for testing
-    _mint(msg.sender, 20);
+    _mint(msg.sender, 20000000000000000000);
 
     gatewayContract.setDappMetadata(feePayerAddress);
   }
@@ -81,6 +81,12 @@ contract XERC20 is ERC20, IDapp {
     uint256 amount,
     bytes calldata requestMetadata
   ) public payable {
+    require(
+      keccak256(bytes(ourContractOnChains[destChainId])) !=
+        keccak256(bytes("")),
+      "contract on dest not set"
+    );
+
     require(
       balanceOf(msg.sender) >= amount,
       "ERC20: Amount cannot be greater than the balance"
@@ -135,18 +141,23 @@ contract XERC20 is ERC20, IDapp {
   /// @param packet the payload sent by the source chain contract when the request was created.
   /// @param srcChainId chain ID of the source chain in string.
   function iReceive(
-    string memory, //requestSender,
-    bytes memory packet,
-    string memory srcChainId
+    string calldata requestSender,
+    bytes calldata packet,
+    string calldata srcChainId
   ) external override returns (bytes memory) {
     require(msg.sender == address(gatewayContract), "only gateway");
+    require(
+      keccak256(bytes(ourContractOnChains[srcChainId])) ==
+        keccak256(bytes(requestSender))
+    );
+
     (bytes memory recipient, uint256 amount) = abi.decode(
       packet,
       (bytes, uint256)
     );
     _mint(toAddress(recipient), amount);
 
-    return abi.encode(srcChainId);
+    return "";
   }
 
   /// @notice function to handle the acknowledgement received from the destination chain
@@ -162,17 +173,6 @@ contract XERC20 is ERC20, IDapp {
     bool execFlag,
     bytes memory execData
   ) external override {}
-
-  /// @notice function to convert type address into type bytes.
-  function toBytes(address a) public pure returns (bytes memory b) {
-    assembly {
-      let m := mload(0x40)
-      a := and(a, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
-      mstore(add(m, 20), xor(0x140000000000000000000000000000000000000000, a))
-      mstore(0x40, add(m, 52))
-      b := m
-    }
-  }
 
   /// @notice Function to convert bytes to address
   /// @param _bytes bytes to be converted

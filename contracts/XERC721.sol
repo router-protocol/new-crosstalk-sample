@@ -143,11 +143,17 @@ contract XERC721 is ERC721, IDapp {
   /// @param packet the payload sent by the source chain contract when the request was created.
   /// @param srcChainId chain ID of the source chain in string.
   function iReceive(
-    string memory, //requestSender,
+    string memory requestSender,
     bytes memory packet,
     string memory srcChainId
   ) external override returns (bytes memory) {
     require(msg.sender == address(gatewayContract), "only gateway");
+    require(
+      keccak256(bytes(ourContractOnChains[srcChainId])) ==
+        keccak256(bytes(requestSender)),
+      "only our contract"
+    );
+
     // decoding our payload
     TransferParams memory transferParams = abi.decode(packet, (TransferParams));
     _mint(toAddress(transferParams.recipient), transferParams.nftId);
@@ -168,19 +174,6 @@ contract XERC721 is ERC721, IDapp {
     bool execFlag,
     bytes memory execData
   ) external override {}
-
-  /// @notice function to convert type address into type bytes.
-  /// @param a address to be converted
-  /// @return b bytes pertaining to the address
-  function toBytes(address a) public pure returns (bytes memory b) {
-    assembly {
-      let m := mload(0x40)
-      a := and(a, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
-      mstore(add(m, 20), xor(0x140000000000000000000000000000000000000000, a))
-      mstore(0x40, add(m, 52))
-      b := m
-    }
-  }
 
   /// @notice Function to convert bytes to address
   /// @param _bytes bytes to be converted
