@@ -116,7 +116,7 @@ contract XERC20 is ERC20, IDapp {
     uint128 relayerFees,
     uint8 ackType,
     bool isReadCall,
-    bytes memory asmAddress
+    string memory asmAddress
   ) public pure returns (bytes memory) {
     bytes memory requestMetadata = abi.encodePacked(
       destGasLimit,
