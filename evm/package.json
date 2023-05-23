@@ -1,8 +1,9 @@
 {
-  "name": "hardhat-project",
+  "name": "crosstalk_examples",
   "scripts": {
     "compile": "hardhat compile",
-    "clean": "hardhat clean"
+    "clean": "hardhat clean",
+    "test": "hardhat test"
   },
   "devDependencies": {
     "@codechecks/client": "^0.1.11",
@@ -58,7 +59,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.0",
     "@openzeppelin/contracts-upgradeable": "^4.8.3",
-    "@routerprotocol/evm-gateway-contracts": "1.1.11",
+    "@routerprotocol/evm-gateway-contracts": "1.1.12",
     "@routerprotocol/router-crosstalk-utils": "^1.0.6",
     "hardhat-deploy-ethers": "^0.3.0-beta.13"
   }

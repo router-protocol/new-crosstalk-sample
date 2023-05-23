@@ -14,5 +14,12 @@
 *.iml
 .idea
 
-artifacts/*
 schema
+
+deployment
+
+node_modules
+
+.env
+
+artifacts

@@ -41,7 +41,7 @@ pub fn instantiate(
     Ok(Response::new().add_submessage(SubMsg {
         msg: WasmMsg::Instantiate {
             admin: Some(info.sender.to_string()),
-            code_id: msg.xerc1155_codeid,
+            code_id: msg.cw1155_codeid,
             msg: to_binary(&Cw1155InstantiateMsg {
                 minter: env.contract.address.to_string(),
             })?,

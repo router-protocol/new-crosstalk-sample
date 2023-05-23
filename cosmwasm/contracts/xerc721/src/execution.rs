@@ -99,6 +99,18 @@ pub fn transfer_crosschain(
         }
         _ => (),
     }
+    let token = tract
+        .tokens
+        .load(deps.storage, &token_id.to_string())
+        .unwrap();
+
+    let mut token_uri = "".to_string();
+    match token.token_uri {
+        Some(tokenuri) => {
+            token_uri = tokenuri;
+        }
+        None => {}
+    }
 
     // burn nft
     tract.tokens.remove(deps.storage, &token_id.to_string())?;
@@ -110,6 +122,7 @@ pub fn transfer_crosschain(
     let transfer_params = TransferParams {
         nft_id: token_id,
         recipient,
+        token_uri,
     };
 
     let encoded_payload: Vec<u8> = encode(&[transfer_params.get_evm_encoding()?]);
@@ -191,10 +204,23 @@ pub fn handle_sudo_request(
 
     // mint nft
     let tract = Cw721NFTContract::default();
+
+    match tract
+        .tokens
+        .load(deps.storage, &transfer_params.nft_id.to_string())
+    {
+        Ok(_) => {
+            return Err(StdError::GenericErr {
+                msg: "AlreadyMinted".to_string(),
+            })
+        }
+        Err(_) => {}
+    }
+
     let token_info = TokenInfo {
         owner: deps.api.addr_validate(&transfer_params.recipient)?,
         approvals: vec![],
-        token_uri: None,
+        token_uri: Some(transfer_params.token_uri),
         extension: Empty {},
     };
     tract.tokens.save(

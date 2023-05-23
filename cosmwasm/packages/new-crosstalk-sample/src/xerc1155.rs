@@ -3,7 +3,6 @@ use cosmwasm_std::{Binary, CustomMsg, StdResult, Uint128};
 use router_wasm_bindings::{
     ethabi::{ethereum_types::U256, ParamType, Token},
     types::{ChainType, RequestMetaData},
-    utils::{convert_address_from_bytes_to_string, convert_address_from_string_to_bytes},
     Bytes,
 };
 use schemars::JsonSchema;
@@ -11,7 +10,7 @@ use schemars::JsonSchema;
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {
     pub minter: String, // fee payer will be contract itself
-    pub xerc1155_codeid: u64,
+    pub cw1155_codeid: u64,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]

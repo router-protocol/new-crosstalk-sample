@@ -1,0 +1,15 @@
+{
+  "name": "cosmwasm",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@cosmjs/stargate": "^0.30.1",
+    "@routerprotocol/router-chain-sdk-ts": "^0.8.45",
+    "dotenv": "^16.0.3"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.1",
+    "@types/node": "^20.2.3"
+  }
+}

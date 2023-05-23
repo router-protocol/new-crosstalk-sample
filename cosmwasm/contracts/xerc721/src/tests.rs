@@ -1,20 +1,22 @@
 use crate::contract::{execute, instantiate, query};
 use crate::execution::{Cw721ExecuteMsg, Cw721QueryMsg};
-use cw721::{NftInfoResponse, OwnerOfResponse};
+use cw721::{ContractInfoResponse, NftInfoResponse, OwnerOfResponse};
 use cw721_base::MintMsg;
-use new_crosstalk_sample::xerc721::{ExecuteMsg, InstantiateMsg, QueryMsg};
+use new_crosstalk_sample::xerc721::{ExecuteMsg, InstantiateMsg, QueryMsg, TransferParams};
+use router_wasm_bindings::ethabi::{decode, ParamType, Token};
 use router_wasm_bindings::types::RequestMetaData;
 use router_wasm_bindings::RouterMsg;
 
 use cosmwasm_std::testing::{
     mock_dependencies, mock_env, mock_info, MockApi, MockQuerier, MockStorage,
 };
-use cosmwasm_std::{CosmosMsg, Deps, Empty, Env, MessageInfo, Response, StdError, Uint128};
+use cosmwasm_std::{Binary, CosmosMsg, Deps, Empty, Env, MessageInfo, Response, StdError, Uint128};
 
 use cosmwasm_std::from_binary;
 use cosmwasm_std::DepsMut;
 use cosmwasm_std::OwnedDeps;
 use std::marker::PhantomData;
+use std::vec;
 
 const SENDER: &str = "router1apapk9zfz3rp4x87fsm6h0s3zd0wlmkz0fx8tx";
 
@@ -29,8 +31,8 @@ fn get_mock_dependencies() -> OwnedDeps<MockStorage, MockApi, MockQuerier> {
 
 fn do_instantiate(mut deps: DepsMut) {
     let instantiate_msg = InstantiateMsg {
-        name: "ERC721".into(),
-        symbol: "ERC721".into(),
+        name: "XERC721".into(),
+        symbol: "XERC721".into(),
         minter: SENDER.to_string(),
     };
     let info = mock_info(SENDER, &[]);
@@ -83,7 +85,16 @@ fn get_nft_info(
 #[test]
 fn test_basic() {
     let mut deps = get_mock_dependencies();
+    let env = mock_env();
+
     do_instantiate(deps.as_mut());
+
+    let msg = Cw721QueryMsg::ContractInfo {};
+    let res = query(deps.as_ref(), env, msg).unwrap();
+    let contract_info: ContractInfoResponse = from_binary(&res).unwrap();
+    println!("{:?}", contract_info);
+    assert_eq!(contract_info.name, "XERC721".to_string());
+    assert_eq!(contract_info.symbol, "XERC721".to_string());
 }
 
 #[test]
@@ -123,7 +134,7 @@ fn test_mint_nft() {
 
     let mint_msg = MintMsg {
         token_id: "2".into(),
-        token_uri: None,
+        token_uri: Some("someuri".to_string()),
         owner: SENDER.into(),
         extension: Empty {},
     };
@@ -145,12 +156,12 @@ fn test_transfer_crosschain() {
         env.clone(),
         info.clone(),
         "1".into(),
-        remote_contract,
+        remote_contract.clone(),
     );
 
     let mint_msg = MintMsg {
         token_id: "2".into(),
-        token_uri: None,
+        token_uri: Some("URI".to_string()),
         owner: SENDER.into(),
         extension: Empty {},
     };
@@ -178,11 +189,12 @@ fn test_transfer_crosschain() {
     let ext_cc_msg = ExecuteMsg::TransferCrossChain {
         dst_chain_id: "1".into(),
         token_id: 2,
-        recipient: "0x1C609537a32630c054202e2B089B9Da268667C5D".to_string(),
+        recipient: SENDER.to_string(),
         request_metadata,
     };
     let exec_msg = Cw721ExecuteMsg::Extension { msg: ext_cc_msg };
     let res = execute(deps.as_mut(), env.clone(), info.clone(), exec_msg.clone());
+
     assert!(res.is_ok());
 
     if let Ok(result) = res {
@@ -198,8 +210,23 @@ fn test_transfer_crosschain() {
                 } => {
                     // in order to verify encoded payload
                     // println!("{:?}", hex::encode(request_packet));
+                    // let req_payload = hex::decode(hex::encode(request_packet)).unwrap();
+                    // decode it as string bytes
 
-                    //Binary(hex::decode(op).unwrap())
+                    let req_payload = Binary(request_packet);
+                    let param_vec: Vec<ParamType> = vec![ParamType::String, ParamType::Bytes];
+                    let token_vec = match decode(&param_vec, &req_payload.0) {
+                        Ok(data) => data,
+                        Err(_) => {
+                            assert!(false);
+                            vec![]
+                        }
+                    };
+                    let dst_address = token_vec[0].clone().to_string();
+                    assert!(dst_address == remote_contract);
+                    let payload = token_vec[1].clone().into_bytes().unwrap();
+                    test_decoding_in_ireceive(Binary(payload));
+
                     Ok(Response::<RouterMsg>::new())
                 }
             },
@@ -211,4 +238,22 @@ fn test_transfer_crosschain() {
     // nft should be burned with id 2
     let response = get_nft_info(deps.as_ref(), env, "2".into());
     assert!(response.is_err());
+}
+
+fn test_decoding_in_ireceive(payload: Binary) {
+    let params = TransferParams::get_params_types();
+    let param_vec: Vec<ParamType> = vec![params];
+    let token_vec = match decode(&param_vec, &payload.0) {
+        Ok(data) => data,
+        Err(_) => {
+            assert!(false);
+            return;
+        }
+    };
+    let transfer_params_tokens: Vec<Token> = token_vec[0].clone().into_tuple().unwrap();
+    let transfer_params: TransferParams =
+        TransferParams::from_token_tuple(transfer_params_tokens).unwrap();
+
+    assert!(transfer_params.nft_id == 2);
+    assert!(transfer_params.recipient == SENDER.to_string());
 }

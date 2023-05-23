@@ -9,27 +9,28 @@ use cw1155_base::contract::{
 };
 use cw1155_base::ContractError;
 
-#[cfg_attr(not(feature = "library"), entry_point)]
-pub fn instantiate(
-    deps: DepsMut,
-    env: Env,
-    info: MessageInfo,
-    msg: InstantiateMsg,
-) -> Result<Response, StdError> {
-    cw1155_instantiate(deps, env, info, msg)
-}
+//TODO: resolve multiple entrypont issue
+// #[cfg_attr(not(feature = "library"), entry_point)]
+// pub fn instantiate(
+//     deps: DepsMut,
+//     env: Env,
+//     info: MessageInfo,
+//     msg: InstantiateMsg,
+// ) -> Result<Response, StdError> {
+//     cw1155_instantiate(deps, env, info, msg)
+// }
 
-#[cfg_attr(not(feature = "library"), entry_point)]
-pub fn execute(
-    deps: DepsMut,
-    env: Env,
-    info: MessageInfo,
-    msg: Cw1155ExecuteMsg,
-) -> Result<Response, ContractError> {
-    cw1155_execute(deps, env, info, msg)
-}
+// #[cfg_attr(not(feature = "library"), entry_point)]
+// pub fn execute(
+//     deps: DepsMut,
+//     env: Env,
+//     info: MessageInfo,
+//     msg: Cw1155ExecuteMsg,
+// ) -> Result<Response, ContractError> {
+//     cw1155_execute(deps, env, info, msg)
+// }
 
-#[cfg_attr(not(feature = "library"), entry_point)]
-pub fn query(deps: Deps, env: Env, msg: Cw1155QueryMsg) -> StdResult<Binary> {
-    cw1155_query(deps, env, msg)
-}
+// #[cfg_attr(not(feature = "library"), entry_point)]
+// pub fn query(deps: Deps, env: Env, msg: Cw1155QueryMsg) -> StdResult<Binary> {
+//     cw1155_query(deps, env, msg)
+// }

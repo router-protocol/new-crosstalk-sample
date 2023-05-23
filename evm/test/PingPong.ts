@@ -3,36 +3,32 @@ import chai, { expect } from "chai";
 import { Contract } from "ethers";
 import { solidity } from "ethereum-waffle";
 import { ethers } from "hardhat";
-import { SignerWithAddress } from "hardhat-deploy-ethers/signers";
 
 chai.use(solidity);
 
 describe("Ping-Pong", function () {
   let gateway: Contract;
   let pingPong: Contract;
-  let owner: string;
-  let otherAccount: string;
+  let owner: any;
+  let otherAccount: any;
 
   before(async () => {
     [owner, otherAccount] = await ethers.getSigners();
 
     const Gateway = await ethers.getContractFactory("MockGateway");
-    gateway = await Gateway.deploy();
+    gateway = await Gateway.connect(owner).deploy();
     await gateway.initialize();
-    console.log("Gateway deployed to:", gateway.address);
     const PingPong = await ethers.getContractFactory("PingPong");
     pingPong = await PingPong.connect(owner).deploy(
       gateway.address,
       "router1z6ralzg5tsznq9s6xmutyeen7evylcj7harabc"
     );
-    console.log("Pingpong deployed to:", pingPong.address);
   });
 
   it("Should set dapp metadata if called by owner", async function () {
     await pingPong.setDappMetadata(
       "router1z6ralzg5tsznq9s6xmutyeen7evylcj7hjchjw"
     );
-    console.log("metadata set");
   });
 
   it("Should NOT set dapp metadata if not called by owner", async function () {

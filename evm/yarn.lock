@@ -1861,10 +1861,10 @@
     "@openzeppelin/contracts" "^4.4.1"
     "@openzeppelin/contracts-upgradeable" "^4.7.3"
 
-"@routerprotocol/evm-gateway-contracts@1.1.11":
-  version "1.1.11"
-  resolved "https://registry.yarnpkg.com/@routerprotocol/evm-gateway-contracts/-/evm-gateway-contracts-1.1.11.tgz#ebd0f2504d79fc7055a4d21e215d09983c8a1d32"
-  integrity sha512-lUW6ry17imFujeUPcS4wqQoQT1UUpQjboPLXcRkm2YncQsqo8gw47+l7A5m0N0aRRWnRKLg+CgJlhGl7HRSmhA==
+"@routerprotocol/evm-gateway-contracts@1.1.12":
+  version "1.1.12"
+  resolved "https://registry.yarnpkg.com/@routerprotocol/evm-gateway-contracts/-/evm-gateway-contracts-1.1.12.tgz#534fc026355ea268f2cc6facb81a02c5dd465596"
+  integrity sha512-NcOpieSfXol+MEWb2ebeNhKdHeGtaVUm6oRxtOsEbW6QKpxKvGY2MyGJPDDbwOQgYQ2EVm2CisHYJ2JRbhWbDQ==
   dependencies:
     "@openzeppelin/contracts" "^4.4.1"
     "@openzeppelin/contracts-upgradeable" "^4.7.3"
