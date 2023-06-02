@@ -1,0 +1,16 @@
+{
+  "name": "counter-rust",
+  "version": "1.0.0",
+  "license": "(MIT AND Apache-2.0)",
+  "scripts": {
+    "deploy": "cd contract && sh deploy.sh",
+    "build": "npm run build:contract",
+    "build:contract": "cd contract && sh build.sh",
+    "test": "npm run build:contract && npm run test:unit",
+    "test:unit": "cd contract && cargo test"
+  },
+  "devDependencies": {
+    "near-cli": "^3.3.0"
+  },
+  "dependencies": {}
+}
