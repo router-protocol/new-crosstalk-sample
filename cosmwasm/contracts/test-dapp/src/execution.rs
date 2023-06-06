@@ -1,6 +1,6 @@
-use cosmwasm_std::{Binary, DepsMut, MessageInfo, ReplyOn, Response, StdResult, SubMsg, Uint128};
+use cosmwasm_std::{Binary, DepsMut, MessageInfo, ReplyOn, Response, StdResult, SubMsg, Uint128, StdError};
 use router_wasm_bindings::{
-    ethabi::{encode, Token},
+    ethabi::{encode, Token, ParamType, decode},
     Bytes, RouterMsg, RouterQuery,
 };
 
@@ -30,7 +30,7 @@ pub fn send_i_request(
     deps.api.debug(&info_str);
     let request_packet: Bytes = encode(&[
         Token::String(dest_contract_address.clone()),
-        Token::Bytes(payload.0),
+        Token::Bytes(payload.clone().0),
     ]);
 
     let i_send_request: RouterMsg = RouterMsg::CrosschainCall {
@@ -41,13 +41,32 @@ pub fn send_i_request(
         request_metadata: request_metadata.0,
         request_packet,
     };
+
     let cross_chain_sub_msg: SubMsg<RouterMsg> = SubMsg {
         id: CREATE_I_SEND_REQUEST,
         msg: i_send_request.into(),
         gas_limit: None,
         reply_on: ReplyOn::Success,
     };
-    let res = Response::new()
+
+    let token_vec: Vec<Token> = match decode(&[ParamType::Uint(64), ParamType::String], &payload.0) {
+        Ok(data) => data,
+        Err(_) => {
+            return Err(StdError::GenericErr {
+                msg: String::from("err.into()"),
+            })
+        }
+    };
+
+    let greeting: String = token_vec[1].clone().into_string().unwrap();
+
+    if greeting == "".to_string() {
+        return  Err(StdError::GenericErr{
+            msg: String::from("greeting cannot be empty")
+        });
+    }
+
+    let res: Response<RouterMsg> = Response::new()
         .add_submessage(cross_chain_sub_msg.into())
         .add_attribute("dest_contract_address", dest_contract_address);
     Ok(res)

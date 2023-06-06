@@ -3,33 +3,6 @@
 version = 3
 
 [[package]]
-name = "XERC1155"
-version = "0.1.0"
-dependencies = [
- "arrayref",
- "cosmwasm-crypto",
- "cosmwasm-schema 1.2.4",
- "cosmwasm-std",
- "cosmwasm-storage",
- "cw-multi-test",
- "cw-storage-plus 0.13.4",
- "cw-utils 1.0.1",
- "cw0",
- "cw1155",
- "cw1155-base",
- "cw2 0.13.4",
- "getrandom",
- "hex",
- "new-crosstalk-sample",
- "parity-scale-codec",
- "router-wasm-bindings",
- "schemars",
- "serde",
- "serde_json",
- "thiserror",
-]
-
-[[package]]
 name = "XERC721"
 version = "0.1.0"
 dependencies = [
@@ -420,64 +393,6 @@ dependencies = [
  "cosmwasm-std",
  "schemars",
  "serde",
- "thiserror",
-]
-
-[[package]]
-name = "cw1155"
-version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4be0ebb4d95abc0e3f8ea00fbcf10afec5416b0aa1122c703de69850296897c5"
-dependencies = [
- "cosmwasm-schema 1.2.4",
- "cosmwasm-std",
- "cw-utils 0.16.0",
- "schemars",
- "serde",
-]
-
-[[package]]
-name = "cw1155-base"
-version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b847cda4bdab297bcbe64be0cce5eed18b4dea58358a819fb96df81ff9aa1e5a"
-dependencies = [
- "cosmwasm-schema 1.2.4",
- "cosmwasm-std",
- "cw-storage-plus 0.16.0",
- "cw-utils 0.16.0",
- "cw1155",
- "cw2 0.16.0",
- "schemars",
- "serde",
- "thiserror",
-]
-
-[[package]]
-name = "cw1155-token"
-version = "0.1.0"
-dependencies = [
- "arrayref",
- "cosmwasm-crypto",
- "cosmwasm-schema 1.2.4",
- "cosmwasm-std",
- "cosmwasm-storage",
- "cw-multi-test",
- "cw-storage-plus 0.13.4",
- "cw-utils 1.0.1",
- "cw0",
- "cw1155",
- "cw1155-base",
- "cw2 0.13.4",
- "getrandom",
- "hex",
- "integer-sqrt",
- "new-crosstalk-sample",
- "protobuf",
- "router-wasm-bindings",
- "schemars",
- "serde",
- "serde_json",
  "thiserror",
 ]
 

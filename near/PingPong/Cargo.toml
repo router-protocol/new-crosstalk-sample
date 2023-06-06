@@ -1,0 +1,25 @@
+[package]
+name = "cross-chain-ping-pong-application"
+version = "1.0.0"
+authors = ["Router Protocol <shivam@routerprotocol.com>"]
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+near-sdk = "4.0.0"
+schemars = "0.8.12"
+hex = { version = "0.4.3", default-features = false }
+router-wasm-bindings = { version = "0.1.17", default-features = false, features = ["ethabi"] }
+
+[profile.release]
+codegen-units = 1
+opt-level = "z"
+lto = true
+debug = false
+panic = "abort"
+overflow-checks = true
+
+[workspace]
+members = []
