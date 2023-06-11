@@ -52,15 +52,15 @@ contract XERC721 is ERC721,ERC721URIStorage,IDapp {
   ) ERC721("MyNFT", "NFT") {
     name["mumbai"]="80001";
     name["fuji"]="43113";
-    gateway["mumbai"]=0xcAa6223D0d41FB27d6FC81428779751317FC24cB;
-    gateway["fuji"]=0xcAa6223D0d41FB27d6FC81428779751317FC24cB;
+    gateway["mumbai"]=0x94caA85bC578C05B22BDb00E6Ae1A34878f047F7;
+    gateway["fuji"]=0x94caA85bC578C05B22BDb00E6Ae1A34878f047F7;
     ChainName=chainName;
     address  gatewayAddress=gateway[chainName];
     gatewayContract = IGateway(gatewayAddress);
     owner = msg.sender;
 
     // setting metadata for dapp
-    gatewayContract.setDappMetadata("0xFc4b8E4A5E208fb1D50B3914fff9eb258315b60B");
+    gatewayContract.setDappMetadata("0x1687DF89145c0530161A36f8b26733f6584FE25e");
     safeMint(msg.sender,id,uri);
     
   }
