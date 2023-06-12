@@ -250,4 +250,17 @@ impl PingPong {
 
         env::log_str(&ack_from_destination_event.to_string());
     }
+
+    pub fn withdraw_fees(&self, recipient: AccountId) -> Promise {
+        if env::predecessor_account_id() != self.owner {
+            env::panic_str("Only owner");
+        }
+
+        let balance: u128 = env::account_balance() - Self::total_storage_cost();
+        Promise::new(recipient).transfer(balance)
+    }
+
+    pub fn total_storage_cost() -> u128 {
+        u128::from(env::storage_usage()) * env::storage_byte_cost()
+    }
 }
