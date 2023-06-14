@@ -165,7 +165,7 @@ contract XERC20 is ERC20, IDapp {
     
      _mint(owner, amount);
 
-    return abi.encode(srcChainId);
+    return "";
   }
 
   /// @notice function to handle the acknowledgement received from the destination chain
@@ -185,15 +185,7 @@ contract XERC20 is ERC20, IDapp {
   /// @notice function to convert type address into type bytes.
   /// @param a address to be converted
   /// @return b bytes pertaining to the address
-  function toBytes(address a) public pure returns (bytes memory b) {
-    assembly {
-      let m := mload(0x40)
-      a := and(a, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
-      mstore(add(m, 20), xor(0x140000000000000000000000000000000000000000, a))
-      mstore(0x40, add(m, 52))
-      b := m
-    }
-  }
+ 
 
   /// @notice Function to convert bytes to address
   /// @param _bytes bytes to be converted
