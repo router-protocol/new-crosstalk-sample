@@ -1,0 +1,6 @@
+{
+  "alpha": {
+    "PingPong": "ping-pong-alpha.routerprotocolalpha.testnet",
+    "nearChainId": "near-testnet"
+  }
+}

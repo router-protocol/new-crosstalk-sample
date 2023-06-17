@@ -1,0 +1,16 @@
+{
+  "alpha": {
+    "80001": {
+      "PingPong": "0xca2C7E0018CBACf6358308155f745D2Efa22b42f",
+      "chainType": "EVM"
+    },
+    "43113": {
+      "PingPong": "0x35Ac54Ee315042a74819e8EF6Fd381C951A9836f",
+      "chainType": "EVM"
+    },
+    "router_9605-1": {
+      "PingPong": "",
+      "chainType": "ROUTER"
+    }
+  }
+}
