@@ -1,0 +1,14 @@
+{
+  "name": "router-gateway-contract",
+  "version": "1.0.0",
+  "license": "(MIT AND Apache-2.0)",
+  "scripts": {
+    "build": "sh build.sh",
+    "deploy": "sh deploy.sh",
+    "test": "cd gateway-upgradeable && cargo test"
+  },
+  "devDependencies": {
+    "near-cli": "^3.3.0"
+  },
+  "dependencies": {}
+}

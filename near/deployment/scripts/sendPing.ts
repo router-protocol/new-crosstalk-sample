@@ -28,16 +28,16 @@ export async function sendPing(
     throw new Error("Please add ROUTER_NETWORK to .env file");
   }
 
-  const data = await fs.readJSONSync("scripts/deployment.json");
-  const pingPongAddr = data[routerNetwork].PingPong;
+  const data = await fs.readJSONSync("deployment.json");
+  const pingPongAddr = data[routerNetwork].pingPong;
 
-  const destFile = await fs.readJSONSync("scripts/chains.json");
-  const destContractAddress = destFile[routerNetwork][destChainId].PingPong;
+  const destFile = await fs.readJSONSync("chains.json");
+  const destContractAddress = destFile[routerNetwork][destChainId].pingPong;
   const destChainType = destFile[routerNetwork][destChainId].chainType;
 
-  const nearNetwork = process.env.NEAR_NETWORK;
-  if (!nearNetwork) {
-    throw new Error("Please add NEAR_NETWORK to .env file");
+  let nearNetwork = "testnet";
+  if (routerNetwork == "mainnet") {
+    nearNetwork = "mainnet";
   }
 
   const signerAddress = process.env.NEAR_SIGNER_ADDRESS;
@@ -84,8 +84,6 @@ export async function sendPing(
     changeMethods: ["i_ping"],
     viewMethods: [],
   });
-
-  const reqMetadata = requestMetadata[destChainId];
 
   const tx = await pingPongInstance.i_ping({
     args: {

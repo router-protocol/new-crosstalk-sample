@@ -1,5 +1,5 @@
 [package]
-name = "cross-chain-ping-pong-application"
+name = "ping-pong"
 version = "1.0.0"
 authors = ["Router Protocol <shivam@routerprotocol.com>"]
 edition = "2021"
@@ -20,6 +20,3 @@ lto = true
 debug = false
 panic = "abort"
 overflow-checks = true
-
-[workspace]
-members = []

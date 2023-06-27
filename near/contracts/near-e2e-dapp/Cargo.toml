@@ -12,6 +12,7 @@ near-sdk = "4.0.0"
 ethabi = { version = "18.0.0", default-features = false }
 hex = { version = "0.4.3", default-features = false }
 uint = { version = "0.9.3", default-features = false }
+getrandom = {version = "0.2.0", features = ["custom"]}
 
 [profile.release]
 codegen-units = 1
@@ -21,5 +22,3 @@ debug = false
 panic = "abort"
 overflow-checks = true
 
-[workspace]
-members = []

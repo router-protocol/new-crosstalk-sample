@@ -1,0 +1,8 @@
+{
+  "testnet": {
+    "chain_id": "near-testnet",
+    "gateway": "gateway-1687862701420.routerprotocol.testnet",
+    "feePayer": "0xAb771C0e0C33b8794BdE3a79568D829De399C094",
+    "pingPong": "ping-pong-1687870174098.routerprotocol.testnet"
+  }
+}

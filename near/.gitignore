@@ -1,0 +1,11 @@
+# Ignore build artifacts from the local tests sub-crate.
+/target/
+**/target/
+.env
+**/.env
+node_modules
+**/node_modules/
+artifacts/
+
+# Ignore backup files creates by cargo fmt.
+**/*.rs.bk
