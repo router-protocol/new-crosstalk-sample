@@ -6,7 +6,7 @@ use ethabi::{decode, ParamType, Token};
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::UnorderedMap;
 use near_sdk::json_types::Base64VecU8;
-use near_sdk::serde_json;
+use near_sdk::{serde_json, PromiseOrValue};
 use near_sdk::{env, json_types::U128, near_bindgen, AccountId, Gas, Promise};
 
 // Define the contract structure
@@ -161,7 +161,7 @@ impl TestDapp {
         request_sender: String,
         packet: Vec<u8>,
         src_chain_id: String,
-    ) -> Vec<u8> {
+    ) -> PromiseOrValue<Vec<u8>> {
         if self.gateway.clone() != env::predecessor_account_id() {
             env::panic_str("only gateway");
         }
@@ -185,7 +185,7 @@ impl TestDapp {
         self.greeting_record
             .insert(&(src_chain_id, nonce), &greeting);
 
-        packet
+        PromiseOrValue::Value(packet)
     }
 
     pub fn i_ack(&mut self, request_identifier: U128, exec_flag: bool, exec_data: Vec<u8>) {
