@@ -14,7 +14,7 @@ use near_sdk::{
     collections::UnorderedMap,
     env,
     json_types::U128,
-    near_bindgen, AccountId, Gas, Promise,
+    near_bindgen, AccountId, Gas, Promise, PromiseOrValue,
 };
 use router_wasm_bindings::ethabi::{decode, encode, ethereum_types::U256, ParamType, Token};
 
@@ -176,7 +176,7 @@ impl PingPong {
         request_sender: String,
         packet: Vec<u8>,
         src_chain_id: String,
-    ) -> Vec<u8> {
+    ) -> PromiseOrValue<Vec<u8>> {
         if env::predecessor_account_id() != self.gateway.clone() {
             env::panic_str("not gateway");
         }
@@ -206,7 +206,7 @@ impl PingPong {
 
         env::log_str(&ping_from_source.to_string());
 
-        packet
+        PromiseOrValue::Value(packet)
     }
 
     pub fn i_ack(
