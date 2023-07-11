@@ -12,5 +12,19 @@
       "pingPong": "",
       "chainType": "ROUTER"
     }
+  },
+  "testnet": {
+    "80001": {
+      "pingPong": "0xc44809443091cea7E5531D565834Ea9Ac9931A3B",
+      "chainType": "EVM"
+    },
+    "43113": {
+      "pingPong": "0xD28582a0589003ceA101bC32835654ee7b7AE135",
+      "chainType": "EVM"
+    },
+    "router_9601-1": {
+      "pingPong": "router10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqu3vful",
+      "chainType": "ROUTER"
+    }
   }
 }

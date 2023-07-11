@@ -99,3 +99,5 @@ export async function sendPing(
 
   console.log(tx);
 }
+
+sendPing("43113", "Hello", "0x95810b6EC89149946e522439303bF4330dD0dd40");

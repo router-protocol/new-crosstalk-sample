@@ -10,13 +10,34 @@ import {
   TxGrpcClient,
 } from "@routerprotocol/router-chain-sdk-ts";
 import dotenv from "dotenv";
+import fs from "fs-extra";
 import { getChainInfo, getEndpoints } from "./utils";
 dotenv.config();
 
 const endpoints = getEndpoints();
 const chainInfo = getChainInfo();
-export async function approve(srcChainId: string, dappAddress: string) {
+export async function approve() {
+  let srcChainId: string = "";
+  let dappAddress: string = "";
   try {
+    const routerNetwork = process.env.ROUTER_NETWORK;
+    if (!routerNetwork) {
+      throw new Error("Please add ROUTER_NETWORK to .env file");
+    }
+
+    let nearNetwork = "testnet";
+    if (routerNetwork == "mainnet") {
+      nearNetwork = "mainnet";
+    }
+
+    const data = await fs.readJSONSync("deployment.json");
+
+    if (!data[routerNetwork]) {
+      data[routerNetwork] = {};
+    }
+
+    srcChainId = data[routerNetwork].chain_id;
+    dappAddress = data[routerNetwork].pingPong;
     const privateKeyHash = process.env.FEE_PAYER_PRIVATE_KEY;
 
     if (!privateKeyHash) {
@@ -136,3 +157,5 @@ async function sendFeeApprovalTx(
     return false;
   }
 }
+
+approve();
