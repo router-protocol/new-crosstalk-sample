@@ -1,4 +1,4 @@
-use cosmwasm_std::{Binary, DepsMut, ReplyOn, Response, StdResult, SubMsg, Uint128, Event};
+use cosmwasm_std::{Binary, DepsMut, Event, ReplyOn, Response, StdResult, SubMsg, Uint128};
 use router_wasm_bindings::{
     ethabi::{encode, ethereum_types::U256, Token},
     Bytes, RouterMsg, RouterQuery,

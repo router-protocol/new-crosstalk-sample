@@ -178,14 +178,14 @@ fn test_sudo_outbound_ack_function() {
 
 #[test]
 fn test_encode() {
-    let addr: String =
-        String::from("0xEeDb3AB68d567A6CD6D19Fa819fe77b9f8Ed1538");
+    let addr: String = String::from("0xEeDb3AB68d567A6CD6D19Fa819fe77b9f8Ed1538");
     println!(
         "{:?}",
         Binary(
             convert_address_from_string_to_bytes(addr, ChainType::ChainTypeEvm.get_chain_code())
                 .unwrap()
-        ).to_base64()
+        )
+        .to_base64()
     );
 
     let binary: Binary = Binary::from_base64("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAN4Lazp2QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBcm91dGVyMXJkbDdmZGp0azRjc3JmenBzc2ptenMwMzhyejd1bWRjbm03bmVkdDNoamNkZjc0enI5N3FqMm03ZmMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").unwrap();

@@ -13,7 +13,7 @@ use crate::{
     modifiers::is_owner_modifier,
     query::{fetch_oracle_gas_price, fetch_white_listed_contract},
     state::{
-        CHAIN_ID, CHAIN_TYPE_MAPPING, CREATE_I_SEND_REQUEST, CROSS_CHAIN_TOKEN,
+        CHAIN_ID, CHAIN_TYPE_MAPPING, CREATE_I_SEND_REQUEST, CROSS_CHAIN_TOKEN, OWNER,
         WHITELISTED_CONTRACT_MAPPING,
     },
 };
@@ -28,8 +28,10 @@ pub fn handle_execute(
         ExecuteMsg::SetChainTypes { chain_type_info } => {
             set_chain_types_info(deps, env, info, chain_type_info)
         }
+        ExecuteMsg::UpdateOwner { new_owner } => update_owner(deps, &env, &info, new_owner),
         ExecuteMsg::SetChainId { id } => set_chain_id(deps, env, info, id),
         ExecuteMsg::SetXerc20Addr { addr } => set_xerc20_addr(deps, env, info, addr),
+        ExecuteMsg::Mint { recipient, amount } => mint(deps, &env, &info, recipient, amount),
         ExecuteMsg::SetWhiteListedContracts { contracts } => {
             set_white_listed_contracts(deps, &env, &info, contracts)
         }
@@ -58,6 +60,43 @@ pub fn set_white_listed_contracts(
     }
 
     let res = Response::new().add_attribute("action", "SetCustodyContracts");
+    Ok(res)
+}
+
+pub fn mint(
+    deps: DepsMut<RouterQuery>,
+    _env: &Env,
+    info: &MessageInfo,
+    recipient: String,
+    amount: Uint128,
+) -> StdResult<Response<RouterMsg>> {
+    is_owner_modifier(deps.as_ref(), &info)?;
+    deps.api.addr_validate(&recipient)?;
+    let mint_msg = cw20_base::msg::ExecuteMsg::Mint { recipient, amount };
+
+    let xerc20_token: String = CROSS_CHAIN_TOKEN.load(deps.storage)?;
+    let exec_mint_msg: CosmosMsg<RouterMsg> = CosmosMsg::Wasm(WasmMsg::Execute {
+        contract_addr: xerc20_token,
+        funds: vec![],
+        msg: to_binary(&mint_msg)?,
+    });
+    let info_str: String = format!("exec_mint_token {:?}", exec_mint_msg);
+    deps.api.debug(&info_str);
+
+    let res = Response::new().add_message(exec_mint_msg);
+    Ok(res)
+}
+
+pub fn update_owner(
+    deps: DepsMut<RouterQuery>,
+    _env: &Env,
+    info: &MessageInfo,
+    new_owner: String,
+) -> StdResult<Response<RouterMsg>> {
+    is_owner_modifier(deps.as_ref(), &info)?;
+
+    OWNER.save(deps.storage, &new_owner)?;
+    let res = Response::new();
     Ok(res)
 }
 

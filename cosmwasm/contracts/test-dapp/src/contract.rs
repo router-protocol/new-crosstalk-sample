@@ -142,11 +142,10 @@ pub fn handle_sudo_request(
     let data_string: String = token_vec[1].clone().into_string().unwrap();
 
     if data_string.clone() == "Fail Dest Req".to_string() {
-        return  Err(StdError::GenericErr{
-            msg: String::from("String != Fail Dest Req")
+        return Err(StdError::GenericErr {
+            msg: String::from("String != Fail Dest Req"),
         });
     }
-
 
     PING_FROM_SOURCE.save(deps.storage, (&src_chain_id, request_id), &data_string)?;
 
@@ -204,16 +203,16 @@ fn handle_sudo_ack(
                 })
             }
         };
-    
+
         request_id = token_vec[0].clone().into_uint().unwrap().as_u64();
         let data_string: String = token_vec[1].clone().into_string().unwrap();
 
         if data_string.clone() == "Fail Ack Req".to_string() {
-            return  Err(StdError::GenericErr{
-                msg: String::from("String != Fail Ack Req")
+            return Err(StdError::GenericErr {
+                msg: String::from("String != Fail Ack Req"),
             });
         }
-    
+
         PONG_FROM_DESTINATION.save(deps.storage, &request_id.to_string(), &data_string)?;
     }
 

@@ -1,6 +1,8 @@
-use cosmwasm_std::{Binary, DepsMut, MessageInfo, ReplyOn, Response, StdResult, SubMsg, Uint128, StdError};
+use cosmwasm_std::{
+    Binary, DepsMut, MessageInfo, ReplyOn, Response, StdError, StdResult, SubMsg, Uint128,
+};
 use router_wasm_bindings::{
-    ethabi::{encode, Token, ParamType, decode},
+    ethabi::{decode, encode, ParamType, Token},
     Bytes, RouterMsg, RouterQuery,
 };
 
@@ -49,7 +51,8 @@ pub fn send_i_request(
         reply_on: ReplyOn::Success,
     };
 
-    let token_vec: Vec<Token> = match decode(&[ParamType::Uint(64), ParamType::String], &payload.0) {
+    let token_vec: Vec<Token> = match decode(&[ParamType::Uint(64), ParamType::String], &payload.0)
+    {
         Ok(data) => data,
         Err(_) => {
             return Err(StdError::GenericErr {
@@ -61,8 +64,8 @@ pub fn send_i_request(
     let greeting: String = token_vec[1].clone().into_string().unwrap();
 
     if greeting == "".to_string() {
-        return  Err(StdError::GenericErr{
-            msg: String::from("greeting cannot be empty")
+        return Err(StdError::GenericErr {
+            msg: String::from("greeting cannot be empty"),
         });
     }
 

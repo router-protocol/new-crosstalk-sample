@@ -33,6 +33,13 @@ pub enum ExecuteMsg {
     SetXerc20Addr {
         addr: String,
     },
+    Mint {
+        recipient: String,
+        amount: Uint128,
+    },
+    UpdateOwner {
+        new_owner: String,
+    },
     SetChainTypes {
         chain_type_info: Vec<ChainTypeInfo>,
     },
