@@ -1,17 +1,20 @@
-import { task, types } from "hardhat/config";
+import { task } from "hardhat/config";
 import { TaskArguments } from "hardhat/types";
 
-task("TASK_DEPLOY_PINGPONG").setAction(async function (
+task("TASK_DEPLOY_PINGPONG")
+.addParam("gateway", "Gateway Contract Address")
+.addParam("feepayer", "Fee Payer Address")
+.setAction(async function (
   _taskArguments: TaskArguments,
   hre
 ) {
-  const network = await hre.ethers.provider.getNetwork();
-  const chainId = network.chainId;
+  const chainId = await hre.network.config.chainId;
+  if (chainId == undefined) {
+    return;
+  }
 
-  const deployments = require("../../deployment/deployments.json");
-
-  const gatewayContract = deployments[chainId].gatewayContract;
-  const feePayerAddress = deployments[chainId].feePayerAddress;
+  const gatewayContract = _taskArguments.gateway;
+  const feePayerAddress = _taskArguments.feepayer;
   const deployContract = "PingPong";
 
   console.log("Contract Deployment Started ");
