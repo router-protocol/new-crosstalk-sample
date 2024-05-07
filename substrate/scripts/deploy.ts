@@ -1,10 +1,7 @@
 import { ApiPromise, WsProvider, Keyring } from "@polkadot/api";
 import { Abi } from "@polkadot/api-contract";
 import fs from "fs";
-import RouteToken_factory from "../types/constructors/route_token";
-import Gateway_factory from "../types/constructors/gateway_contract";
-import Dapp_factory from "../types/constructors/dapp";
-import RouteToken from "../types/contracts/route_token";
+import TestDapp_Factory from "../types/constructors/test_dapp";
 import {
   DeploymentStore,
   parseCommandLineArgs,
@@ -12,18 +9,15 @@ import {
   ss558AccountIdToHexEncodedString,
 } from "./utils";
 import { getNetwork } from "./config/chain.config";
-import args from "./config/args.json";
 import { KeyringPair } from "@polkadot/keyring/types";
 
 require("dotenv").config();
 
-// ts-node ./scripts/deploy.ts --net "aleph-testnet" --type "route_token"
-// ts-node ./scripts/deploy.ts --net "aleph-testnet" --type "dapp" --gateway 5CcDvdYaiSzSJqboXjeAj79W7AjfefrWkGEcWinPpHprkHMY
-// ts-node ./scripts/deploy.ts --net "aleph-testnet" --type "gateway" --routetoken 5ERU7SyfzQ8xYyPYYZfqZvaUEUksyALTusaDXBpaXhTHtMUE
-const MINTER_ROLE = 4254773782;
+// ts-node ./scripts/deploy.ts --net "aleph-testnet" --type "test-dapp" --gateway 5CcDvdYaiSzSJqboXjeAj79W7AjfefrWkGEcWinPpHprkHMY --routetoken 5ERU7SyfzQ8xYyPYYZfqZvaUEUksyALTusaDXBpaXhTHtMUE --feepayer 0x4A7239751857bCc1Cd75485FdE66B07224C448Bf
 async function main() {
   const store = new DeploymentStore();
-  let { net, env, routetoken, type, gateway } = parseCommandLineArgs();
+  let { net, env, routetoken, feepayer, type, gateway } =
+    parseCommandLineArgs();
   if (!net) throw new Error("network undefined, pass as --net");
   if (!env) env = "testnet";
   if (!type) type = "gateway";
@@ -39,14 +33,17 @@ async function main() {
   const deployer = keyring.addFromMnemonic(process.env.MNEMONIC);
 
   switch (type) {
-    case "dapp":
-      await DappDeployment(deployer, api, store, env, network, gateway);
-      break;
-    case "gateway":
-      await GatewayDeployment(deployer, api, store, env, network, routetoken);
-      break;
-    case "route_token":
-      await RouteTokenDeployment(deployer, api, store, env, network);
+    case "test-dapp":
+      await TesDappDeployment(
+        deployer,
+        api,
+        store,
+        env,
+        network,
+        gateway,
+        feepayer,
+        routetoken
+      );
       break;
     default:
       throw new Error("Invalid Deployment Type!!");
@@ -63,23 +60,25 @@ main()
     process.exit(0);
   });
 
-async function DappDeployment(
+async function TesDappDeployment(
   deployer: KeyringPair,
   api: ApiPromise,
   store: DeploymentStore,
   env: string,
   network: any,
-  gateway: string
+  gateway: string,
+  feepayer: string,
+  routetoken: string
 ) {
-  console.log("|| Deploying Dapp ||");
-  const dappFactory = new Dapp_factory(api, deployer);
-  const dappRaw = JSON.parse(
-    fs.readFileSync(__dirname + `/../artifacts/dapp.contract`, "utf8")
+  console.log("|| Deploying Test Dapp ||");
+  const testDappFactory = new TestDapp_Factory(api, deployer);
+  const testDappRaw = JSON.parse(
+    fs.readFileSync(__dirname + `/../artifacts/test_dapp.contract`, "utf8")
   );
-  const dappRawABI = new Abi(dappRaw);
+  const dappRawABI = new Abi(testDappRaw);
   gateway = gateway
     ? gateway
-    : (await store.getStore())[env][network.id]["Gateway"].gateway.address;
+    : (await store.getStore())[env][network.id]["TestDapp"].gateway.address;
   //@ts-ignore
   let { gasRequired } = await api.call.contractsApi.instantiate(
     deployer.address,
@@ -87,21 +86,26 @@ async function DappDeployment(
     null,
     null,
     { Upload: dappRawABI.info.source.wasm },
-    dappRawABI.constructors[0].toU8a([network.id, gateway]),
+    dappRawABI.constructors[0].toU8a([gateway, feepayer, routetoken]),
     ""
   );
-  const { address, result } = await dappFactory.new(network.id, gateway, {
-    gasLimit: gasRequired,
-  });
+  const { address, result } = await testDappFactory.new(
+    gateway,
+    feepayer,
+    routetoken,
+    {
+      gasLimit: gasRequired,
+    }
+  );
   console.log(
-    "[ Dapp Deployed To | SS558 Address: ",
+    "[ Test Dapp Deployed To | SS558 Address: ",
     address,
     ", HexAddress: ",
     ss558AccountIdToHexEncodedString(api, address),
     " ]"
   );
   const { block } = await api.rpc.chain.getBlock(result.blockHash);
-  await store.store(env, network.id, "Dapp", "", "", {
+  await store.store(env, network.id, "TestDapp", "", "", {
     dapp: {
       address: address,
       txHash: result.txHash,
