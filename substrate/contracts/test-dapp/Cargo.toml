@@ -1,0 +1,27 @@
+[package]
+name = "test-dapp"
+version = "0.1.0"
+authors = ["Priyanshu Mishra <priyanshu@routerprotocol.com>"]
+edition = "2021"
+description = "Sample Dapp contract implementation for the substrate based chains"
+repository = "https://github.com/router-protocol/router-gateway-contracts.git"
+
+[dependencies]
+ink = { version = "4.3.0", default-features = false }
+scale = { package = "parity-scale-codec", version = "3", default-features = false, features = [
+    "derive",
+] }
+scale-info = { version = "2.6", default-features = false, features = [
+    "derive",
+], optional = true }
+ethabi = { version = "18.0.0", default-features = false }
+hex = { version = "0.4.3", default-features = false, features = ["alloc"] }
+
+
+[lib]
+path = "src/lib.rs"
+
+[features]
+default = ["std"]
+std = ["ink/std", "scale/std", "scale-info/std"]
+ink-as-dependency = []
