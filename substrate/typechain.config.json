@@ -1,0 +1,7 @@
+{
+  "projectFiles": ["./contracts/test-dapp"],
+  "artifactsPath": "./artifacts",
+  "typechainGeneratedPath": "./types",
+  "isWorkspace": true,
+  "workspacePath": "./"
+}

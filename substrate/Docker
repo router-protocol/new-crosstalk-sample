@@ -1,0 +1,15 @@
+<!-- # Pull the latest stable image.
+docker pull paritytech/contracts-ci-linux
+
+# Create a new contract in your current directory.
+docker run --rm -it -v $(pwd):/sources paritytech/contracts-ci-linux \
+  cargo contract new --target-dir /sources my_contract -->
+
+# Build the contract. This will create the contract file under
+# `my_contract/target/ink/my_contract.contract`.
+<!-- docker run --rm -it -v $(pwd):/sources paritytech/contracts-ci-linux \
+  cargo contract build --manifest-path=/sources/my_contract/Cargo.toml -->
+
+
+  docker run --rm -it -v $(pwd)/substrate:/sources paritytech/contracts-ci-linux \
+  cargo contract build --manifest-path=/sources/Cargo.toml
