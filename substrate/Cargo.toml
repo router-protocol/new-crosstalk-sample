@@ -1,5 +1,5 @@
 [workspace]
-members = ["contracts/test-dapp"]
+members = ["contracts/test-dapp", "contracts/rate-limit"]
 exclude = []
 
 [profile.release]

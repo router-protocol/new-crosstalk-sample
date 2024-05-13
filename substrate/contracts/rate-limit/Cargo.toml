@@ -1,5 +1,5 @@
 [package]
-name = "test_dapp"
+name = "rate_limit"
 version = "0.1.0"
 authors = ["Priyanshu Mishra <priyanshu@routerprotocol.com>"]
 edition = "2021"
@@ -14,7 +14,6 @@ scale = { package = "parity-scale-codec", version = "3", default-features = fals
 scale-info = { version = "2.6", default-features = false, features = [
     "derive",
 ], optional = true }
-ethabi = { version = "18.0.0", default-features = false }
 hex = { version = "0.4.3", default-features = false, features = ["alloc"] }
 
 
