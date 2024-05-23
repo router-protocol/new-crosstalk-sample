@@ -1,5 +1,5 @@
 {
-  "projectFiles": ["./contracts/test-dapp"],
+  "projectFiles": ["./contracts/test-dapp", "./contracts/rate-limit"],
   "artifactsPath": "./artifacts",
   "typechainGeneratedPath": "./types",
   "isWorkspace": true,

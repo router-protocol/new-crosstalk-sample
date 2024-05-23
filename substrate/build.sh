@@ -31,8 +31,8 @@ fi
 
 # Check if all build options are valid
 for build in "${BUILDS[@]}"; do
-    if [[ $build != "test-dapp" ]]; then
-        echo "Invalid value for --build argument: $build. Valid values are: test-dapp"
+    if [[ $build != "test-dapp" && $build != "rate-limit" ]]; then
+        echo "Invalid value for --build argument: $build. Valid values are: test-dapp, rate-limit"
         exit 1
     fi
 done
