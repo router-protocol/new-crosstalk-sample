@@ -10,6 +10,7 @@ import {
 } from "./utils";
 import { getNetwork } from "./config/chain.config";
 import { KeyringPair } from "@polkadot/keyring/types";
+import { ethers } from "ethers";
 
 require("dotenv").config();
 
@@ -91,7 +92,7 @@ async function TesDappDeployment(
   );
   const { address, result } = await testDappFactory.new(
     gateway,
-    feepayer,
+    Array.from(ethers.toUtf8Bytes(feepayer)),
     routetoken,
     {
       gasLimit: gasRequired,

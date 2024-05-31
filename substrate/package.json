@@ -4,18 +4,22 @@
   "author": "Priyanshu Mishra",
   "license": "MIT",
   "scripts": {
-    "types": "npx @727-ventures/typechain-compiler --config typechain.config.json && ts-node ./scripts/fixJsonFile.ts",
+    "types": "npx @dpowxconsensus/typechain-compiler --config typechain.config.json && ts-node ./scripts/fixJsonFile.ts",
     "test": "jest"
   },
   "dependencies": {
-    "@727-ventures/typechain-compiler": "^1.1.4",
-    "@727-ventures/typechain-polkadot": "^1.1.1",
+    "@dpowxconsensus/typechain-compiler": "^1.1.6",
+    "@dpowxconsensus/typechain-polkadot": "^1.1.6",
+    "@dpowxconsensus/typechain-types": "^1.2.6",
+    "@polkadot/api": "10.13.1",
+    "@polkadot/api-contract": "10.13.1",
+    "@polkadot/types-codec": "10.13.1",
     "@types/bn.js": "^5.1.0",
     "@types/node": "^17.0.34",
-    "ethers": "^6.10.0",
     "fs-extra": "^11.2.0",
     "ts-node": "^10.7.0",
-    "typescript": "^4.6.4"
+    "typescript": "^4.6.4",
+    "ethers": "6.11.1"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.23.3",
