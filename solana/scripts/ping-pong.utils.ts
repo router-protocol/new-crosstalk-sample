@@ -3,6 +3,7 @@ import * as anchor from "@coral-xyz/anchor";
 import { PingPong } from "../target/types/ping_pong";
 import {
   decodeRequestPacket,
+  feeApprovalMsg,
   getEventByName,
   getGatewayPdas,
   getPingPongPdas,
@@ -12,6 +13,7 @@ import {
   PACKET_SEED_PREFIX,
 } from "./utils";
 import * as ethers from "ethers";
+import { getNetworkType } from "@routerprotocol/router-chain-sdk-ts";
 
 export async function initialize(
   provider: Provider,
@@ -165,5 +167,29 @@ export async function getDstContract(
       pingPongPdas.eventAuthority.account,
       pingPongInstance.programId,
     ])
+  );
+}
+
+export async function approveFeePayer(
+  provider: Provider,
+  pingPongInstance: anchor.Program<PingPong>,
+  signer: anchor.web3.Keypair,
+  args: string[]
+) {
+  const pingPongPdas = getPingPongPdas(pingPongInstance.programId);
+  const dappAddress = getStrSolanaHandlerAddress([
+    pingPongInstance.programId,
+    pingPongPdas.pingPongAccount.account,
+  ]);
+  const { chainId } = await pingPongInstance.account.pingPongAccount.fetch(
+    pingPongPdas.pingPongAccount.account
+  );
+  console.log(
+    await feeApprovalMsg(
+      ethers.getBytes(args[0]),
+      chainId,
+      dappAddress,
+      getNetworkType(args[1])
+    )
   );
 }

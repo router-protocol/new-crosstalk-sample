@@ -5,6 +5,7 @@ import {
   initialize,
   setDappMetadata,
   getDstContract,
+  approveFeePayer,
 } from "./ping-pong.utils";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import fse from "fs-extra";
@@ -69,6 +70,15 @@ export async function ifn() {
       //NOTE: ts-node ./scripts/ping-pong.ts --type "set_dapp_metadata" --net solana-devnet --program_id 7dQqaHQFRBC8AhaRzqtQWLEM7fXxwGw9VEKwLpyf8rM3  --args "Aak2MJfJAhFk3vmg2LG97hmNa3TUtKzn4kM7FgWYLw5F,0x4E27128CdEF7a3CFFdF800BE3Be6EE74639CB639"
       case "set_dapp_metadata":
         await setDappMetadata(
+          provider,
+          pingPongInstance,
+          deployer,
+          args.split(",")
+        );
+        break;
+      //NOTE: ts-node ./scripts/ping-pong.ts --type "approve_fee_payer" --net solana-devnet --program_id 7dQqaHQFRBC8AhaRzqtQWLEM7fXxwGw9VEKwLpyf8rM3 --args "0x62aca6e7b2560126cd03fcd5b355aa385fe37135c2779cf185d822fa0c2d123d,testnet"
+      case "approve_fee_payer":
+        await approveFeePayer(
           provider,
           pingPongInstance,
           deployer,

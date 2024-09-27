@@ -5,6 +5,7 @@
     },
     "dependencies": {
         "@coral-xyz/anchor": "^0.29.0",
+        "@routerprotocol/router-chain-sdk-ts": "^0.8.69-beta-3.8",
         "dotenv": "^16.4.5",
         "ethers": "^6.13.2",
         "fs-extra": "^11.2.0"
