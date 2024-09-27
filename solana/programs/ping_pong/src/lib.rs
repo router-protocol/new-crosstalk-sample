@@ -5,7 +5,7 @@ use gateway::program::Gateway;
 use gateway::{self, DappAccount as GatewayDappAccount, GatewayAccount, PacketAccount};
 use internal::*;
 
-declare_id!("BaLkN7XPeRjrrh4fAaNDsZhX5aade46ZkDCRTKTviyHV");
+declare_id!("7dQqaHQFRBC8AhaRzqtQWLEM7fXxwGw9VEKwLpyf8rM3");
 
 pub const AUTHORIZED_DEPLOYER: &str = "AcSZ7ECK7yQk9TedzsjkT8dzhyuxi7TzXNhwuGADD9N";
 const PING_PONG_ACCOUNT: &[u8] = b"ping_pong";

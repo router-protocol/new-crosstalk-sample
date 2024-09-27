@@ -303,3 +303,23 @@ export async function decodeRequestPacket(
     message,
   };
 }
+
+export function getStrSolanaHandlerAddress(
+  addresses: anchor.web3.PublicKey[]
+): string {
+  let bytes: number[] = [];
+  addresses.map((address) => (bytes = [...bytes, ...address.toBytes()]));
+  return ethers.hexlify(Uint8Array.from(bytes));
+}
+
+export function getPubSolanaHandlerAddress(
+  str: string
+): anchor.web3.PublicKey[] {
+  const bytes = ethers.getBytes(str);
+  const addresses: any[] = [];
+  for (let idx = 0; idx < bytes.length / 32; idx++)
+    addresses.push(
+      new anchor.web3.PublicKey(bytes.slice(idx * 32, (idx + 1) * 32))
+    );
+  return addresses;
+}

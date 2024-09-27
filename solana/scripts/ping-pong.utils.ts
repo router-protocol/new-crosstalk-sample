@@ -8,6 +8,7 @@ import {
   getPingPongPdas,
   getRandomInt,
   getRequestMetadataEncodePacked,
+  getStrSolanaHandlerAddress,
   PACKET_SEED_PREFIX,
 } from "./utils";
 import * as ethers from "ethers";
@@ -18,19 +19,23 @@ export async function initialize(
   signer: anchor.web3.Keypair,
   args: string[]
 ) {
-  const [pingPongAccount] = anchor.web3.PublicKey.findProgramAddressSync(
-    [anchor.utils.bytes.utf8.encode("ping_pong")],
-    pingPongInstance.programId
+  const gatewayProgramId = new anchor.web3.PublicKey(
+    new anchor.web3.PublicKey(args[1])
+  );
+  const pdas = getGatewayPdas(gatewayProgramId);
+  const pingPongPdas = getPingPongPdas(
+    pingPongInstance.programId,
+    gatewayProgramId
   );
   const instruction = await pingPongInstance.methods
     .initialize(
       args[0],
-      new anchor.web3.PublicKey(args[1]),
+      pdas.gatewayAuthority.account,
       new anchor.BN(args.length > 2 ? args[2] : 0),
       new anchor.web3.PublicKey(args.length > 3 ? args[3] : signer.publicKey)
     )
     .accounts({
-      pingPongAccount,
+      pingPongAccount: pingPongPdas.pingPongAccount.account,
       signer: signer.publicKey,
       systemProgram: anchor.web3.SystemProgram.programId,
     })
@@ -53,26 +58,19 @@ export async function setDappMetadata(
 ) {
   const gatewayProgramId = new anchor.web3.PublicKey(args[0]);
   const pdas = getGatewayPdas(gatewayProgramId);
-  const [pingPongAccount] = anchor.web3.PublicKey.findProgramAddressSync(
-    [anchor.utils.bytes.utf8.encode("ping_pong")],
-    pingPongInstance.programId
-  );
-  const [dappAccount] = anchor.web3.PublicKey.findProgramAddressSync(
-    [
-      anchor.utils.bytes.utf8.encode("dapp_account"),
-      pingPongAccount.toBuffer(),
-    ],
+  const pingPongPdas = getPingPongPdas(
+    pingPongInstance.programId,
     gatewayProgramId
   );
   const instruction = await pingPongInstance.methods
     .setDappMetadata(args[1])
     .accounts({
-      pingPongAccount,
+      pingPongAccount: pingPongPdas.pingPongAccount.account,
       signer: signer.publicKey,
       systemProgram: anchor.web3.SystemProgram.programId,
       gatewayProgram: gatewayProgramId,
       gatewayAccount: pdas.gatewayAccount.account,
-      gatewayDappAccount: dappAccount,
+      gatewayDappAccount: pingPongPdas.dappAccount.account,
       gatewayEventAuthority: pdas.eventAuthority.account,
     })
     .instruction();
@@ -150,4 +148,22 @@ export async function ping(
   );
 
   console.log(await decodeRequestPacket(provider, requestPacket));
+}
+
+export async function getDstContract(
+  provider: Provider,
+  pingPongInstance: anchor.Program<PingPong>,
+  signer: anchor.web3.Keypair,
+  args: string[]
+) {
+  const pingPongPdas = getPingPongPdas(pingPongInstance.programId);
+  console.log(
+    "Dst Contract [Pass this when calling from other as dst contract]: ",
+    getStrSolanaHandlerAddress([
+      pingPongInstance.programId,
+      pingPongPdas.pingPongAccount.account,
+      pingPongPdas.eventAuthority.account,
+      pingPongInstance.programId,
+    ])
+  );
 }

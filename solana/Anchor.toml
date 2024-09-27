@@ -5,7 +5,7 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-ping_pong = "BaLkN7XPeRjrrh4fAaNDsZhX5aade46ZkDCRTKTviyHV"
+ping_pong = "7dQqaHQFRBC8AhaRzqtQWLEM7fXxwGw9VEKwLpyf8rM3"
 
 [registry]
 url = "https://api.apr.dev"
