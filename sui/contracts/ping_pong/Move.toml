@@ -1,0 +1,15 @@
+[package]
+name = "ping_pong"
+version = "1.0.0"
+edition = "2024.beta"                                         # To use the Move 2024 edition, currently in alpha
+license = "MIT"                                               # e.g., "MIT", "GPL", "Apache 2.0"
+authors = ["Priyanshu Mishra (priyanshu@routerprotocol.com)"]
+published-at = "0x0"
+
+[dependencies]
+Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
+gateway = { git = "https://github.com/router-protocol/router-gateway-contracts.git", subdir = "sui/contracts/gateway", rev = "feat/sui" }
+router_protocol = { git = "https://github.com/router-protocol/router-gateway-contracts.git", subdir = "sui/contracts/router-protocol", rev = "feat/sui" }
+
+[addresses]
+ping_pong = "0x0"
